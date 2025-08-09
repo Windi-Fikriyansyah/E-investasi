@@ -4,9 +4,47 @@
     <div class="container">
 
         <div class="tabs">
-            <div class="tab active" data-tab="active">Aktif</div>
-            <div class="tab" data-tab="claim">Claim</div>
-            <div class="tab" data-tab="completed">Selesai</div>
+            <div class="tab active" data-tab="active">
+                Aktif
+                @php
+                    $activeCount = $transactions
+                        ->filter(function ($transaction) {
+                            return in_array($transaction->status, ['aktif', 'pending']) && !$transaction->can_claim;
+                        })
+                        ->count();
+                @endphp
+                @if ($activeCount > 0)
+                    <span class="tab-badge">{{ $activeCount }}</span>
+                @endif
+            </div>
+            <div class="tab" data-tab="claim">
+                Claim
+                @php
+                    $claimCount = $transactions
+                        ->filter(function ($transaction) {
+                            return $transaction->can_claim &&
+                                $transaction->status != 'completed' &&
+                                $transaction->can_claim_now;
+                        })
+                        ->count();
+                @endphp
+                @if ($claimCount > 0)
+                    <span class="tab-badge">{{ $claimCount }}</span>
+                @endif
+            </div>
+            <div class="tab" data-tab="completed">
+                Selesai
+                @php
+                    $completedCount = $transactions
+                        ->filter(function ($transaction) {
+                            return $transaction->status == 'completed';
+                        })
+                        ->count();
+                @endphp
+                @if ($completedCount > 0)
+                    <span class="tab-badge">{{ $completedCount }}</span>
+                @endif
+            </div>
         </div>
 
         <!-- Tab Aktif -->
@@ -811,6 +849,26 @@
                 width: 95%;
                 margin: 10% auto;
             }
+        }
+
+        .tab-badge {
+            background-color: #f97316;
+            color: white;
+            border-radius: 50%;
+            padding: 0.25rem 0.5rem;
+            font-size: 0.75rem;
+            margin-left: 0.5rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 1.25rem;
+            height: 1.25rem;
+            line-height: 1;
+        }
+
+        .tab.active .tab-badge {
+            background-color: #fff;
+            color: #f97316;
         }
     </style>
 

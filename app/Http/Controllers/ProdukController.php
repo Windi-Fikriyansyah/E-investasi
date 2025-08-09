@@ -15,12 +15,10 @@ class ProdukController extends Controller
     {
         $categories = DB::table('kategori')->get();
         $products = DB::table('produk')
-            ->select('produk.*', 'produk.kategori as category_name')
+            ->orderBy('created_at', 'desc')
             ->get();
-        $userVip = Auth::check() ? (Auth::user()->keanggotaan ?? 'VIP 0') : 'VIP 0';
-        $userVipLevel = (int) str_replace('VIP ', '', $userVip);
 
-        return view('produk.index', compact('categories', 'products', 'userVipLevel'));
+        return view('produk.index', compact('categories', 'products'));
     }
 
     public function invest(Request $request)

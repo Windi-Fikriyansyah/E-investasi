@@ -5,7 +5,8 @@
         <div class="tabs">
             <div class="tab active" data-tab="all">Semua</div>
             @foreach ($categories as $category)
-                <div class="tab" data-tab="{{ $category->kategori }}">{{ $category->kategori }}</div>
+                <div class="tab" data-tab="category-{{ str_replace(' ', '-', strtolower($category->kategori)) }}">
+                    {{ $category->kategori }}</div>
             @endforeach
         </div>
     </div>
@@ -90,7 +91,7 @@
     </div>
 
     @foreach ($categories as $category)
-        <div class="tab-content" id="{{ $category->kategori }}">
+        <div class="tab-content" id="category-{{ str_replace(' ', '-', strtolower($category->kategori)) }}">
             <div class="investment-grid">
                 @foreach ($products->where('kategori', $category->kategori) as $product)
                     <div class="investment-card" data-product-id="{{ $product->id }}">
