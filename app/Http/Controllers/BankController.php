@@ -15,8 +15,9 @@ class BankController extends Controller
             ->where('id_user', Auth::id())
             ->orderBy('created_at', 'desc')
             ->get();
+        $hasBank = $banks->isNotEmpty();
 
-        return view('bank.index', compact('banks'));
+        return view('bank.index', compact('banks', 'hasBank'));
     }
 
     public function store(Request $request)

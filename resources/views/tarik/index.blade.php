@@ -2,341 +2,373 @@
 
 @section('content')
     <div class="withdrawal-container">
-
         <div class="card">
 
-            <div class="balance-info">
-                <div class="balance-card">
-                    <div class="balance-label">Saldo Tersedia</div>
-                    <div class="balance-amount">Rp {{ number_format(auth()->user()->balance ?? 0, 0, ',', '.') }}</div>
+
+            @if (count($banks) > 0)
+                <div class="bank-info">
+                    <h3 class="section-title">Rekening Tujuan</h3>
+                    <div class="bank-card">
+                        <div class="bank-name">
+                            <i class="fas fa-university"></i> {{ $banks[0]->nama_bank }}
+                        </div>
+                        <div class="bank-number">
+                            <i class="fas fa-credit-card"></i> {{ $banks[0]->no_rekening }}
+                        </div>
+                        <div class="bank-owner">
+                            <i class="fas fa-user"></i> {{ $banks[0]->nama_pemilik }}
+                        </div>
+                    </div>
                 </div>
-            </div>
+            @endif
+        </div>
+
+        <div class="card">
+            <h3 class="section-title">Formulir Penarikan</h3>
 
             <form action="{{ route('withdrawal.store') }}" method="POST" class="withdrawal-form">
                 @csrf
                 <div class="form-group">
-                    <label for="amount">Jumlah Penarikan</label>
-                    <div class="input-group">
-                        <span class="input-group-text">Rp</span>
-                        <input type="text" id="amount" name="amount" class="form-control"
-                            placeholder="Masukkan jumlah" min="50000" required>
-                        <input type="hidden" id="amount_raw" name="amount_raw">
+                    <label for="amount" class="balance-label">
+                        <span class="balance-content">
+                            <i class="fas fa-wallet"></i> Saldo:
+                            <span class="balance-amount">Rp
+                                {{ number_format(auth()->user()->balance ?? 0, 0, ',', '.') }}</span>
+                        </span>
+                    </label>
+
+                    <div class="form-group">
+                        <label for="amount">Jumlah Penarikan</label>
+                        <div class="input-group">
+                            <span class="input-group-text">Rp</span>
+                            <input type="text" id="amount" name="amount" class="form-control"
+                                placeholder="Masukkan jumlah" min="50000" required>
+                            <input type="hidden" id="amount_raw" name="amount_raw">
+                        </div>
+                        <small class="text-muted"><i class="fas fa-info-circle"></i> Minimal penarikan Rp 35.000</small>
                     </div>
-                    <small class="text-muted">Minimal penarikan Rp 50.000</small>
-                </div>
 
-                <div class="form-group">
-                    <label for="bank">Bank Tujuan</label>
-                    <select id="bank" name="bank" class="form-control select2-bank" required>
-                        <option value="" disabled selected>Pilih bank</option>
-                        @foreach ($banks as $bank)
-                            <option value="{{ $bank->id }}">{{ $bank->nama_bank }} - {{ $bank->no_rekening }}
-                                ({{ $bank->nama_pemilik }})
-                            </option>
-                        @endforeach
-                    </select>
-                </div>
+                    <!-- Hidden bank input (since we're using the first bank) -->
+                    @if (count($banks) > 0)
+                        <input type="hidden" id="bank" name="bank" value="{{ $banks[0]->id }}">
+                    @endif
 
-                <div class="form-group">
-                    <label for="notes">Catatan (Opsional)</label>
-                    <textarea id="notes" name="notes" class="form-control" rows="2" placeholder="Tambahkan catatan jika perlu"></textarea>
-                </div>
-
-                <div class="fee-info">
-                    <div class="fee-item">
-                        <span>Biaya Admin (10%)</span>
-                        <span id="admin-fee">Rp 0</span>
+                    <div class="fee-info">
+                        <div class="fee-item">
+                            <span><i class="fas fa-percentage"></i> Biaya Admin (10%)</span>
+                            <span id="admin-fee">Rp 0</span>
+                        </div>
+                        <div class="fee-item total">
+                            <span><i class="fas fa-hand-holding-usd"></i> Total Diterima</span>
+                            <span id="total-received">Rp 0</span>
+                        </div>
                     </div>
-                    <div class="fee-item total">
-                        <span>Total Diterima</span>
-                        <span id="total-received">Rp 0</span>
-                    </div>
-                </div>
 
-                <button type="submit" class="btn btn-primary withdrawal-btn">
-                    <i class="fas fa-paper-plane"></i> Ajukan Penarikan
-                </button>
+                    <button type="submit" class="btn btn-primary withdrawal-btn">
+                        <i class="fas fa-paper-plane"></i> Ajukan Penarikan
+                    </button>
+                </div>
             </form>
         </div>
 
-
+        <div class="card info-card">
+            <h3 class="section-title"><i class="fas fa-info-circle"></i> Informasi Penting</h3>
+            <ul class="info-list">
+                <li><i class="fas fa-clock"></i> Waktu penarikan: 12:00-19:00</li>
+                <li><i class="fas fa-money-bill-wave"></i> Biaya penarikan: 10%</li>
+                <li><i class="fas fa-coins"></i> Penarikan minimum: Rp 35.000</li>
+                <li><i class="fas fa-bolt"></i> Proses penarikan: 1-15 menit</li>
+            </ul>
+        </div>
     </div>
 
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <style>
-        .status.processing {
-            background-color: #bfdbfe;
-            color: #1e40af;
-        }
-
-        .status.pending {
-            background-color: rgba(234, 179, 8, 0.1);
-            /* Light orange/yellow background with 10% opacity */
-            color: rgb(234, 179, 8);
-            /* Amber-500 color for text */
-        }
-
-        .status.success {
-            background-color: rgba(16, 185, 129, 0.1);
-            color: var(--accent-dark);
-        }
-
-        .status.failed {
-            background-color: rgba(239, 68, 68, 0.1);
-            color: #ef4444;
+        :root {
+            --primary: #4f46e5;
+            --primary-dark: #4338ca;
+            --secondary: #f8f9fa;
+            --white: #ffffff;
+            --text: #1f2937;
+            --text-light: #6b7280;
+            --accent-dark: #10b981;
+            --gray: #e5e7eb;
+            --dark-gray: #d1d5db;
+            --rounded-sm: 0.25rem;
+            --rounded-md: 0.5rem;
+            --rounded-lg: 0.75rem;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --gradient: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
         }
 
         .withdrawal-container {
             max-width: 600px;
-            margin: 0 auto;
-            padding: 0.5rem;
+            margin: 2rem auto;
+            padding: 0 1rem;
         }
 
         .card {
             background-color: var(--white);
-            border-radius: var(--rounded-md);
-            padding: 1.5rem;
+            border-radius: var(--rounded-lg);
+            padding: 1.75rem;
             margin-bottom: 1.5rem;
-            box-shadow: var(--shadow-sm);
+            box-shadow: var(--shadow-md);
+            border: 1px solid rgba(0, 0, 0, 0.05);
         }
 
-        h2,
-        h3 {
-            font-size: 1.25rem;
-            font-weight: 600;
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-dark);
             margin-bottom: 1.5rem;
+            text-align: center;
+            position: relative;
+            padding-bottom: 0.75rem;
+        }
+
+        .card-title:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 3px;
+            background: var(--gradient);
+            border-radius: 3px;
+        }
+
+        .section-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 1.25rem;
             display: flex;
             align-items: center;
-            gap: 0.75rem;
-            color: var(--primary-dark);
+            gap: 0.5rem;
         }
 
-        h2 i,
-        h3 i {
-            color: var(--primary);
+        /* Bank Info Card Styles */
+        .bank-info {
+            margin-bottom: 1rem;
         }
 
-        .balance-info {
-            margin-bottom: 1.5rem;
-        }
-
-        .balance-card {
+        .bank-card {
             background: var(--gradient);
             color: white;
             padding: 1.5rem;
             border-radius: var(--rounded-md);
-            text-align: center;
+            box-shadow: 0 4px 6px rgba(79, 70, 229, 0.2);
         }
 
-        .balance-label {
-            font-size: 0.875rem;
-            opacity: 0.9;
-            margin-bottom: 0.5rem;
+        .bank-name,
+        .bank-number,
+        .bank-owner {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 0.75rem;
         }
 
-        .balance-amount {
-            font-size: 1.75rem;
+        .bank-name {
+            font-size: 1.25rem;
             font-weight: 700;
         }
 
+        .bank-number {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .bank-owner {
+            font-size: 1rem;
+            opacity: 0.95;
+        }
+
+        /* Balance Info Styles */
+        .balance-label {
+            font-size: 1rem;
+            color: var(--text);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+        }
+
+        .balance-amount {
+            color: var(--primary-dark);
+            font-weight: 700;
+            font-size: 20px;
+            margin-left: 0.25rem;
+        }
+
         .form-group {
-            margin-bottom: 1.25rem;
+            margin-bottom: 1.5rem;
         }
 
         label {
             display: block;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.75rem;
             font-weight: 500;
             color: var(--text);
         }
 
         .input-group {
             display: flex;
-            margin-bottom: 0.25rem;
+            margin-bottom: 0.5rem;
+            border-radius: var(--rounded-sm);
+            overflow: hidden;
+            border: 1px solid var(--dark-gray);
+        }
+
+        .input-group:focus-within {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.2);
         }
 
         .input-group-text {
             padding: 0.75rem 1rem;
             background-color: var(--gray);
-            border: 1px solid var(--dark-gray);
-            border-right: none;
-            border-radius: var(--rounded-sm) 0 0 var(--rounded-sm);
             color: var(--text-light);
+            font-weight: 500;
         }
 
         .form-control {
             width: 100%;
             padding: 0.75rem 1rem;
-            border: 1px solid var(--dark-gray);
-            border-radius: 0 var(--rounded-sm) var(--rounded-sm) 0;
+            border: none;
             font-size: 1rem;
+            outline: none;
         }
 
-        select.form-control {
-            border-radius: var(--rounded-sm);
-            padding: 0.75rem 1rem;
-            appearance: none;
-            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
-            background-repeat: no-repeat;
-            background-position: right 1rem center;
-            background-size: 1rem;
+        .form-control:focus {
+            box-shadow: none;
         }
 
-        textarea.form-control {
-            resize: vertical;
-        }
-
-        .add-bank-link {
-            display: inline-block;
-            margin-top: 0.5rem;
-            font-size: 0.875rem;
-            color: var(--primary);
-            text-decoration: none;
-        }
-
-        .add-bank-link:hover {
-            text-decoration: underline;
+        .text-muted {
+            font-size: 0.85rem;
+            color: var(--text-light);
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
         }
 
         .fee-info {
             background-color: var(--secondary);
-            border-radius: var(--rounded-sm);
-            padding: 1rem;
-            margin: 1.5rem 0;
+            border-radius: var(--rounded-md);
+            padding: 1.25rem;
+            margin: 1.75rem 0;
+            border: 1px solid var(--gray);
         }
 
         .fee-item {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.75rem;
+            font-size: 0.95rem;
+        }
+
+        .fee-item i {
+            margin-right: 0.5rem;
+            width: 18px;
+            text-align: center;
         }
 
         .fee-item.total {
-            margin-top: 0.75rem;
-            padding-top: 0.75rem;
+            margin-top: 1rem;
+            padding-top: 1rem;
             border-top: 1px solid var(--gray);
             font-weight: 600;
+            font-size: 1.05rem;
+            color: var(--text);
         }
 
         .withdrawal-btn {
             width: 100%;
             padding: 1rem;
-            font-size: 1rem;
+            font-size: 1.05rem;
             font-weight: 600;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 0.75rem;
-            background: var(--primary);
+            background: var(--gradient);
             border: none;
-            border-radius: var(--rounded-sm);
+            border-radius: var(--rounded-md);
             color: white;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(79, 70, 229, 0.2);
         }
 
         .withdrawal-btn:hover {
             background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px rgba(79, 70, 229, 0.3);
         }
 
-        .history-list {
-            margin-top: 1rem;
+        /* Info Card Styles */
+        .info-card {
+            background-color: #f0f9ff;
+            border-left: 4px solid var(--primary);
         }
 
-        .history-item {
-            padding: 1rem 0;
-            border-bottom: 1px solid var(--gray);
+        .info-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
         }
 
-        .history-item:last-child {
-            border-bottom: none;
-        }
-
-        .history-header {
+        .info-list li {
+            padding: 0.5rem 0;
             display: flex;
-            justify-content: space-between;
-            margin-bottom: 0.5rem;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 0.95rem;
+            color: var(--text);
         }
 
-        .status {
-            font-size: 0.75rem;
-            font-weight: 600;
-            padding: 0.25rem 0.75rem;
-            border-radius: var(--rounded-full);
-        }
-
-        .status.success {
-            background-color: rgba(16, 185, 129, 0.1);
-            color: var(--accent-dark);
-        }
-
-
-
-        .status.failed {
-            background-color: rgba(239, 68, 68, 0.1);
-            color: #ef4444;
-        }
-
-        .date {
-            font-size: 0.875rem;
-            color: var(--text-light);
-        }
-
-        .history-details {
-            display: flex;
-            justify-content: space-between;
-        }
-
-        .amount {
-            font-weight: 600;
-        }
-
-        .bank {
-            color: var(--text-light);
-            font-size: 0.875rem;
-        }
-
-        .history-note {
-            margin-top: 0.5rem;
-            font-size: 0.875rem;
-            color: #ef4444;
-        }
-
-        .view-all {
-            display: block;
-            text-align: center;
-            margin-top: 1rem;
+        .info-list li i {
             color: var(--primary);
-            text-decoration: none;
-            font-weight: 500;
-        }
-
-        .view-all:hover {
-            text-decoration: underline;
+            width: 20px;
+            text-align: center;
         }
 
         /* Responsive adjustments */
         @media (max-width: 480px) {
-            .balance-amount {
-                font-size: 1.5rem;
+            .withdrawal-container {
+                padding: 0 0.75rem;
             }
 
             .card {
+                padding: 1.5rem;
+            }
+
+            .card-title {
+                font-size: 1.3rem;
+            }
+
+            .bank-card {
                 padding: 1.25rem;
+            }
+
+            .bank-name {
+                font-size: 1.1rem;
+            }
+
+            .bank-number {
+                font-size: 1rem;
             }
         }
     </style>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         $(document).ready(function() {
-            // Inisialisasi Select2
-            $('#bank').select2({
-                placeholder: "Pilih bank",
-                allowClear: true,
-                width: '100%',
-                theme: 'bootstrap-5',
-            });
-
             // Format input amount to Rupiah
             $('#amount').on('input', function() {
                 // Remove non-digit characters
@@ -416,25 +448,26 @@
                     return;
                 }
 
-                if (!bank) {
+                @if (count($banks) === 0)
                     Swal.fire({
                         icon: 'error',
-                        title: 'Bank Tujuan Belum Dipilih',
-                        text: 'Silakan pilih bank tujuan untuk penarikan',
+                        title: 'Bank Tidak Tersedia',
+                        text: 'Anda belum menambahkan rekening bank untuk penarikan',
                         confirmButtonColor: '#4f46e5',
                     });
                     return;
-                }
+                @endif
 
                 Swal.fire({
                     title: 'Konfirmasi Penarikan',
-                    html: `Anda akan melakukan penarikan sebesar <b>Rp ${formatRupiah(amount)}</b> ke rekening ${$('#bank option:selected').text().split(' - ')[0]}`,
+                    html: `Anda akan melakukan penarikan sebesar <b>Rp ${formatRupiah(amount)}</b> ke rekening {{ count($banks) > 0 ? $banks[0]->nama_bank : '' }}`,
                     icon: 'question',
                     showCancelButton: true,
                     confirmButtonColor: '#4f46e5',
                     cancelButtonColor: '#6b7280',
                     confirmButtonText: 'Konfirmasi',
-                    cancelButtonText: 'Batal'
+                    cancelButtonText: 'Batal',
+                    reverseButtons: true
                 }).then((result) => {
                     if (result.isConfirmed) {
                         // Show loading indicator

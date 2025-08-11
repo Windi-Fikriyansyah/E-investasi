@@ -108,10 +108,17 @@
                     @enderror
                 </div>
 
-                <button type="submit" class="btn-primary">
-                    <i class="fas fa-save"></i> Simpan Rekening
-                </button>
+                @if (!$hasBank)
+                    <button type="submit" class="btn-primary">
+                        <i class="fas fa-save"></i> Simpan Rekening
+                    </button>
+                @endif
             </form>
+            @if ($hasBank)
+                <div class="alert-message">
+                    <p>Anda sudah memiliki rekening bank. Hanya satu rekening yang diperbolehkan.</p>
+                </div>
+            @endif
         </div>
     </div>
 
