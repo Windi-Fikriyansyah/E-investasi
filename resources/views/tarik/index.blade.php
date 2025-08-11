@@ -42,7 +42,7 @@
                         <div class="input-group">
                             <span class="input-group-text">Rp</span>
                             <input type="text" id="amount" name="amount" class="form-control"
-                                placeholder="Masukkan jumlah" min="50000" required>
+                                placeholder="Masukkan jumlah" min="35000" required>
                             <input type="hidden" id="amount_raw" name="amount_raw">
                         </div>
                         <small class="text-muted"><i class="fas fa-info-circle"></i> Minimal penarikan Rp 35.000</small>
@@ -388,7 +388,7 @@
                 // Calculate total amount after fee
                 const amount = value ? parseInt(value) : 0;
                 const fee = Math.round(amount * 0.1);
-                const minWithdrawal = 50000;
+                const minWithdrawal = 35000;
 
                 if (amount > 0 && amount < minWithdrawal) {
                     $(this).addClass('is-invalid');
@@ -424,7 +424,7 @@
                 const form = this;
                 const amount = parseInt($('#amount_raw').val()) || 0;
                 const bank = $('#bank').val();
-                const minWithdrawal = 50000;
+                const minWithdrawal = 35000;
                 const userBalance = {{ auth()->user()->balance ?? 0 }};
                 const totalWithFee = amount;
 
