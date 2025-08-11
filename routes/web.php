@@ -152,6 +152,7 @@ Route::middleware('auth')->group(function () {
     // Get claim history for specific transaction
     Route::get('/transactions/{id}/claim-history', [TransaksiController::class, 'getClaimHistory'])->name('transactions.claim-history');
 
+    Route::get('/tentang-kami', [DashboardController::class, 'tentang'])->name('tentang.index');
     Route::get('/vip-rules', [DashboardController::class, 'rules'])->name('vip.rules');
     Route::get('/referral', [ReferralController::class, 'index'])->name('referral.index');
     Route::get('/tim', [ReferralController::class, 'bonus'])->name('bonus.index');

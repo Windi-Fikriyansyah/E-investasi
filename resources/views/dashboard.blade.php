@@ -24,10 +24,10 @@
                     Rp {{ number_format(auth()->user()->balance ?? 0, 0, ',', '.') }}
                 </div>
 
-                <div class="all-accounts">
+                <a href="{{ route('tentang.index') }}" class="all-accounts">
                     <span>Catatan</span>
                     <i class="fas fa-chevron-right"></i>
-                </div>
+                </a>
             </div>
 
             <!-- Quick Actions -->
@@ -319,10 +319,14 @@
             opacity: 0.9;
             cursor: pointer;
             transition: opacity 0.2s ease;
+            color: white;
+            text-decoration: none;
         }
 
         .all-accounts:hover {
             opacity: 1;
+            color: white;
+            text-decoration: none;
         }
 
         .quick-actions {

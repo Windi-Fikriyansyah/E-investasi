@@ -28,6 +28,7 @@ class RouteHelper
             'withdrawal.history' => 'Riwayat Penarikan',
             'bank.index' => 'Rekening Bank',
             'referral.index' => 'Referral',
+            'tentang.index' => 'Tentang Kami',
             'vip.rules' => 'Aturan VIP',
             // Tambahkan route dan judul lainnya sesuai kebutuhan
         ];

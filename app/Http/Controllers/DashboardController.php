@@ -23,6 +23,11 @@ class DashboardController extends Controller
         return view('dashboard', compact('categories', 'products', 'userVipLevel'));
     }
 
+    public function tentang()
+    {
+        return view('tentang');
+    }
+
     public function rules()
     {
         return view('vip.index');
