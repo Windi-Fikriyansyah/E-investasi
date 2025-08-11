@@ -15,99 +15,21 @@
         <div class="investment-grid">
             @foreach ($products as $product)
                 <div class="investment-card" data-product-id="{{ $product->id }}">
-                    <div class="product-image-container">
-                        <img src="{{ $product->gambar ? asset('storage/' . $product->gambar) : asset('images/default-investment.jpg') }}"
-                            alt="{{ $product->nama_produk }}" class="product-image">
-
+                    <!-- Product Name - Full Width -->
+                    <div class="card-header">
+                        <h3 class="investment-title">{{ $product->nama_produk }}</h3>
                     </div>
 
-                    <div class="card-content">
-                        <div class="card-header">
-                            <h3 class="investment-title">{{ $product->nama_produk }}</h3>
-                        </div>
-
-
-
-                        <div class="investment-details">
-                            <div class="detail-item">
-                                <div class="detail-icon">
-                                    <i class="fas fa-tag"></i>
-                                </div>
-                                <div class="detail-content">
-                                    <span class="detail-label">Harga Produk</span>
-                                    <span class="detail-value">Rp{{ number_format($product->harga, 0, ',', '.') }}</span>
-                                </div>
-                            </div>
-
-                            <div class="detail-item">
-                                <div class="detail-icon">
-                                    <i class="fas fa-clock"></i>
-                                </div>
-                                <div class="detail-content">
-                                    <span class="detail-label">Durasi Kontrak</span>
-                                    <span class="detail-value">{{ $product->durasi }} Hari</span>
-                                </div>
-                            </div>
-
-                            <div class="detail-item">
-                                <div class="detail-icon">
-                                    <i class="fas fa-coins"></i>
-                                </div>
-                                <div class="detail-content">
-                                    <span class="detail-label">Pendapatan Perhari</span>
-                                    <span
-                                        class="detail-value profit">Rp{{ number_format($product->pendapatan_harian, 0, ',', '.') }}</span>
-                                </div>
-                            </div>
-
-                            <div class="detail-item">
-                                <div class="detail-icon">
-                                    <i class="fas fa-money-bill-wave"></i>
-                                </div>
-                                <div class="detail-content">
-                                    <span class="detail-label">Total Pendapatan</span>
-                                    <span
-                                        class="detail-value">Rp{{ number_format($product->total_pendapatan, 0, ',', '.') }}</span>
-                                </div>
-                            </div>
-
-
-                        </div>
-
-                        <div class="investment-description">
-                            <p>{{ Str::limit($product->keterangan, 80) }}</p>
-                        </div>
-
-                        <div class="card-actions">
-                            <button class="btn-invest" data-product-id="{{ $product->id }}">
-                                <i class="fas fa-plus"></i>
-                                Beli Sekarang
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            @endforeach
-        </div>
-    </div>
-
-    @foreach ($categories as $category)
-        <div class="tab-content" id="category-{{ str_replace(' ', '-', strtolower($category->kategori)) }}">
-            <div class="investment-grid">
-                @foreach ($products->where('kategori', $category->kategori) as $product)
-                    <div class="investment-card" data-product-id="{{ $product->id }}">
+                    <!-- Two Column Layout -->
+                    <div class="card-body">
+                        <!-- Left Column - Image -->
                         <div class="product-image-container">
                             <img src="{{ $product->gambar ? asset('storage/' . $product->gambar) : asset('images/default-investment.jpg') }}"
                                 alt="{{ $product->nama_produk }}" class="product-image">
-
                         </div>
 
+                        <!-- Right Column - Details -->
                         <div class="card-content">
-                            <div class="card-header">
-                                <h3 class="investment-title">{{ $product->nama_produk }}</h3>
-                            </div>
-
-
-
                             <div class="investment-details">
                                 <div class="detail-item">
                                     <div class="detail-icon">
@@ -140,6 +62,7 @@
                                             class="detail-value profit">Rp{{ number_format($product->pendapatan_harian, 0, ',', '.') }}</span>
                                     </div>
                                 </div>
+
                                 <div class="detail-item">
                                     <div class="detail-icon">
                                         <i class="fas fa-money-bill-wave"></i>
@@ -150,8 +73,6 @@
                                             class="detail-value">Rp{{ number_format($product->total_pendapatan, 0, ',', '.') }}</span>
                                     </div>
                                 </div>
-
-
                             </div>
 
                             <div class="investment-description">
@@ -166,12 +87,92 @@
                             </div>
                         </div>
                     </div>
+                </div>
+            @endforeach
+        </div>
+    </div>
+
+    @foreach ($categories as $category)
+        <div class="tab-content" id="category-{{ str_replace(' ', '-', strtolower($category->kategori)) }}">
+            <div class="investment-grid">
+                @foreach ($products->where('kategori', $category->kategori) as $product)
+                    <div class="investment-card" data-product-id="{{ $product->id }}">
+                        <!-- Product Name - Full Width -->
+                        <div class="card-header">
+                            <h3 class="investment-title">{{ $product->nama_produk }}</h3>
+                        </div>
+
+                        <!-- Two Column Layout -->
+                        <div class="card-body">
+                            <!-- Left Column - Image -->
+                            <div class="product-image-container">
+                                <img src="{{ $product->gambar ? asset('storage/' . $product->gambar) : asset('images/default-investment.jpg') }}"
+                                    alt="{{ $product->nama_produk }}" class="product-image">
+                            </div>
+
+                            <!-- Right Column - Details -->
+                            <div class="card-content">
+                                <div class="investment-details">
+                                    <div class="detail-item">
+                                        <div class="detail-icon">
+                                            <i class="fas fa-tag"></i>
+                                        </div>
+                                        <div class="detail-content">
+                                            <span class="detail-label">Harga Produk</span>
+                                            <span
+                                                class="detail-value">Rp{{ number_format($product->harga, 0, ',', '.') }}</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="detail-item">
+                                        <div class="detail-icon">
+                                            <i class="fas fa-clock"></i>
+                                        </div>
+                                        <div class="detail-content">
+                                            <span class="detail-label">Durasi Kontrak</span>
+                                            <span class="detail-value">{{ $product->durasi }} Hari</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="detail-item">
+                                        <div class="detail-icon">
+                                            <i class="fas fa-coins"></i>
+                                        </div>
+                                        <div class="detail-content">
+                                            <span class="detail-label">Pendapatan Perhari</span>
+                                            <span
+                                                class="detail-value profit">Rp{{ number_format($product->pendapatan_harian, 0, ',', '.') }}</span>
+                                        </div>
+                                    </div>
+                                    <div class="detail-item">
+                                        <div class="detail-icon">
+                                            <i class="fas fa-money-bill-wave"></i>
+                                        </div>
+                                        <div class="detail-content">
+                                            <span class="detail-label">Total Pendapatan</span>
+                                            <span
+                                                class="detail-value">Rp{{ number_format($product->total_pendapatan, 0, ',', '.') }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="investment-description">
+                                    <p>{{ Str::limit($product->keterangan, 80) }}</p>
+                                </div>
+
+                                <div class="card-actions">
+                                    <button class="btn-invest" data-product-id="{{ $product->id }}">
+                                        <i class="fas fa-plus"></i>
+                                        Beli Sekarang
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 @endforeach
             </div>
         </div>
     @endforeach
-
-
 
     <style>
         /* Main Content Styles */
@@ -246,10 +247,34 @@
             box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
         }
 
+        /* Card Header - Full Width Product Name */
+        .card-header {
+            padding: 1.25rem 1.25rem 0.75rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .investment-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin: 0;
+            color: #1e293b;
+            text-align: center;
+        }
+
+        /* Card Body - Two Column Layout */
+        .card-body {
+            display: flex;
+            gap: 1rem;
+            padding: 1.25rem;
+        }
+
+        /* Left Column - Image */
         .product-image-container {
-            position: relative;
-            height: 160px;
+            flex: 0 0 40%;
+            height: 200px;
+            border-radius: 0.75rem;
             overflow: hidden;
+            position: relative;
         }
 
         .product-image {
@@ -263,6 +288,13 @@
             transform: scale(1.05);
         }
 
+        /* Right Column - Details */
+        .card-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
         .category-badge {
             position: absolute;
             top: 1rem;
@@ -274,21 +306,6 @@
             font-weight: 600;
             color: #2563eb;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-
-        .card-content {
-            padding: 0 1.25rem 1.25rem;
-        }
-
-        .card-header {
-            padding: 1rem 0 0.5rem;
-        }
-
-        .investment-title {
-            font-size: 1.125rem;
-            font-weight: 600;
-            margin-bottom: 0.25rem;
-            color: #1e293b;
         }
 
         /* Investment Stats */
@@ -323,21 +340,24 @@
 
         /* Investment Details */
         .investment-details {
-            padding: 0.75rem 0;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 0.75rem;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            gap: 0.25rem;
+            margin-bottom: 0.75rem;
+            height: 100%;
         }
 
         .detail-item {
             display: flex;
             align-items: center;
-            padding: 0.5rem 0;
+            padding: 0.25rem 0;
         }
 
         .detail-icon {
-            width: 2rem;
-            height: 2rem;
+            width: 1.75rem;
+            height: 1.75rem;
             background: rgba(37, 99, 235, 0.1);
             border-radius: 50%;
             display: flex;
@@ -346,6 +366,7 @@
             margin-right: 0.75rem;
             color: #2563eb;
             flex-shrink: 0;
+            font-size: 0.875rem;
         }
 
         .detail-content {
@@ -372,16 +393,17 @@
 
         /* Description */
         .investment-description {
-            padding: 0.5rem 0 1rem;
             font-size: 0.875rem;
             color: #64748b;
-            line-height: 1.5;
-            border-bottom: 1px solid #e2e8f0;
+            line-height: 1.4;
+            margin-bottom: 0.75rem;
+            flex-shrink: 0;
         }
 
         /* Card Actions */
         .card-actions {
-            padding: 1rem 0 0;
+            margin-top: auto;
+            flex-shrink: 0;
         }
 
         .btn-invest {
@@ -519,9 +541,56 @@
         }
 
         /* Responsive Styles */
-        @media (min-width: 640px) {
+        @media (max-width: 640px) {
+            .card-body {
+                gap: 0.75rem;
+            }
+
+            .product-image-container {
+                flex: 0 0 35%;
+                height: 140px;
+            }
+
+            .detail-icon {
+                width: 1.5rem;
+                height: 1.5rem;
+                font-size: 0.75rem;
+                margin-right: 0.5rem;
+            }
+
+            .detail-label {
+                font-size: 0.7rem;
+            }
+
+            .detail-value {
+                font-size: 0.8rem;
+            }
+
+            .investment-description {
+                font-size: 0.8rem;
+            }
+
+            .btn-invest {
+                padding: 0.75rem;
+                font-size: 0.8rem;
+            }
+
+            .investment-title {
+                font-size: 1rem;
+            }
+
+            .card-header {
+                padding: 1rem 1rem 0.5rem;
+            }
+
+            .card-body {
+                padding: 1rem;
+            }
+        }
+
+        @media (min-width: 641px) {
             .investment-grid {
-                grid-template-columns: repeat(2, 1fr);
+                grid-template-columns: repeat(1, 1fr);
             }
 
             .testimonial-grid {
@@ -535,13 +604,19 @@
             }
 
             .investment-grid {
-                grid-template-columns: repeat(3, 1fr);
+                grid-template-columns: repeat(2, 1fr);
             }
         }
 
         @media (min-width: 1024px) {
             .investment-grid {
-                grid-template-columns: repeat(4, 1fr);
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (min-width: 1200px) {
+            .investment-grid {
+                grid-template-columns: repeat(3, 1fr);
             }
         }
     </style>
