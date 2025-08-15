@@ -24,10 +24,7 @@
                     Rp {{ number_format(auth()->user()->balance ?? 0, 0, ',', '.') }}
                 </div>
 
-                <a href="{{ route('tentang.index') }}" class="all-accounts">
-                    <span>Catatan</span>
-                    <i class="fas fa-chevron-right"></i>
-                </a>
+
             </div>
 
             <!-- Quick Actions -->

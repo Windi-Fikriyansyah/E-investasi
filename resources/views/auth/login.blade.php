@@ -133,13 +133,23 @@
                 margin: 0 15px;
             }
         }
+
+        .login-header img {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 15px;
+            border-radius: 50%;
+            /* optional untuk membuat logo bulat */
+            object-fit: cover;
+            /* untuk memastikan gambar terlihat proporsional */
+        }
     </style>
 </head>
 
 <body>
     <div class="login-container">
         <div class="login-header">
-
+            <img src="{{ asset('images/logo_app.jpg') }}" alt="SmartNiuVolt Logo">
             <h1>Login to SmartNiuVolt</h1>
         </div>
         @if ($errors->any())

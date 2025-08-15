@@ -69,9 +69,16 @@
                         </div>
                     </div>
 
-                    <button type="submit" class="btn btn-primary withdrawal-btn">
-                        <i class="fas fa-paper-plane"></i> Ajukan Penarikan
-                    </button>
+                    @if (!$hasWithdrawnToday && count($banks) > 0)
+                        <button type="submit" class="btn btn-primary withdrawal-btn">
+                            <i class="fas fa-paper-plane"></i> Ajukan Penarikan
+                        </button>
+                    @elseif ($hasWithdrawnToday)
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle"></i> Anda sudah melakukan penarikan hari ini. Penarikan hanya bisa
+                            dilakukan 1 kali per hari.
+                        </div>
+                    @endif
                 </div>
             </form>
         </div>
@@ -106,6 +113,22 @@
             --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
             --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
             --gradient: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+        }
+
+        .alert {
+            padding: 1rem;
+            border-radius: var(--rounded-md);
+            margin: 1rem 0;
+        }
+
+        .alert-info {
+            background-color: #e0f2fe;
+            border-left: 4px solid #38bdf8;
+            color: #0369a1;
+        }
+
+        .alert i {
+            margin-right: 0.5rem;
         }
 
         .withdrawal-container {

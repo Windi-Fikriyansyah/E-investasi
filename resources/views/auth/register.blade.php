@@ -129,8 +129,62 @@
 
         @media (max-width: 480px) {
             .login-container {
-                padding: 30px 20px;
-                margin: 0 15px;
+                padding: 25px 15px;
+                margin: 0 10px;
+                width: 95%;
+            }
+
+            .login-header h1 {
+                font-size: 20px;
+            }
+
+            .login-header img {
+                width: 60px;
+                height: 60px;
+            }
+
+            .form-group input {
+                padding: 10px 12px;
+                font-size: 14px;
+            }
+
+            .login-btn {
+                padding: 10px;
+                font-size: 15px;
+            }
+
+            .signup-link {
+                font-size: 13px;
+            }
+
+            .form-group label {
+                font-size: 14px;
+            }
+
+            .remember-forgot {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+        }
+
+        .login-header img {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 15px;
+            border-radius: 50%;
+            /* optional untuk membuat logo bulat */
+            object-fit: cover;
+            /* untuk memastikan gambar terlihat proporsional */
+        }
+
+        @media (max-width: 320px) {
+            .login-header h1 {
+                font-size: 18px;
+            }
+
+            .form-group input {
+                padding: 8px 10px;
             }
         }
     </style>
@@ -139,7 +193,7 @@
 <body>
     <div class="login-container">
         <div class="login-header">
-
+            <img src="{{ asset('images/logo_app.jpg') }}" alt="SmartNiuVolt Logo">
             <h1>Register to SmartNiuVolt</h1>
         </div>
         @if ($errors->any())
@@ -179,7 +233,7 @@
             <button type="submit" class="login-btn">Daftar</button>
 
             <div class="signup-link">
-                Don't have an account? <a href="{{ route('login') }}">Login</a>
+                Already have an account? <a href="{{ route('login') }}">Login</a>
             </div>
         </form>
     </div>

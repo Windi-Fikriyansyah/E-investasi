@@ -14,6 +14,11 @@ class WithdrawController extends Controller
             ->where('id_user', auth()->id())
             ->get();
 
+        $hasWithdrawnToday = DB::table('withdrawals')
+            ->where('user_id', auth()->id())
+            ->whereDate('created_at', Carbon::today())
+            ->exists();
+
         // Ambil riwayat penarikan tanpa model
         $withdrawals = DB::table('withdrawals')
             ->where('user_id', auth()->id())
@@ -21,7 +26,7 @@ class WithdrawController extends Controller
             ->limit(5)
             ->get();
 
-        return view('tarik.index', compact('banks', 'withdrawals'));
+        return view('tarik.index', compact('banks', 'withdrawals', 'hasWithdrawnToday'));
     }
 
     public function store(Request $request)
@@ -31,6 +36,15 @@ class WithdrawController extends Controller
             'bank' => 'required|exists:bank,id',
         ]);
 
+        $hasWithdrawnToday = DB::table('withdrawals')
+            ->where('user_id', auth()->id())
+            ->whereDate('created_at', Carbon::today())
+            ->exists();
+        if ($hasWithdrawnToday) {
+            return response()->json([
+                'message' => 'Anda sudah melakukan penarikan hari ini. Penarikan hanya bisa dilakukan 1 kali per hari.'
+            ], 422);
+        }
         // Mulai transaction
         DB::beginTransaction();
 
@@ -93,13 +107,6 @@ class WithdrawController extends Controller
     {
         $withdrawals = DB::table('withdrawals')
             ->where('user_id', auth()->id())
-            ->when($request->has('date_filter') && $request->date_filter, function ($query) use ($request) {
-                $date = Carbon::createFromFormat('Y-m-d', $request->date_filter);
-                return $query->whereDate('created_at', $date);
-            }, function ($query) {
-                // Default tampilkan data hari ini
-                return $query->whereDate('created_at', Carbon::today());
-            })
             ->orderBy('created_at', 'desc')
             ->get();
 

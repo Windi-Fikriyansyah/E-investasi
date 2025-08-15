@@ -18,7 +18,7 @@
         <i class="fas fa-users"></i>
         <span>Tim</span>
     </a>
-    <a href="{{ route('dashboard') }}" class="nav-item active">
+    <a href="{{ route('user.dashboard') }}" class="nav-item active">
         <i class="fas fa-home"></i>
         <span>Saya</span>
     </a>

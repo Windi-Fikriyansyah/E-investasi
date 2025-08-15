@@ -40,7 +40,7 @@ Route::get('/dashboard', function () {
     if (auth()->user()->isAdmin()) {
         return redirect()->route('admin.dashboard');
     } else {
-        return redirect()->route('user.dashboard');
+        return redirect()->route('beranda.dashboard');
     }
 })->middleware(['auth', 'verified'])->name('dashboard');
 
@@ -135,6 +135,7 @@ Route::middleware(['auth', 'verified', 'role:admin'])->prefix('admin')->group(fu
 
 
 Route::middleware('auth')->group(function () {
+    Route::get('/Home', [ControllersProdukController::class, 'index'])->name('beranda.dashboard');
     Route::get('/produk', [ControllersProdukController::class, 'index'])->name('produk.index');
     Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');
     Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
