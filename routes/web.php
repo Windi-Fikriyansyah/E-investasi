@@ -50,7 +50,7 @@ Route::middleware(['auth', 'verified', 'role:admin'])->group(function () {
 
 // User routes
 Route::middleware(['auth', 'verified', 'role:user'])->group(function () {
-    Route::get('/beranda', [DashboardController::class, 'index'])->name('user.dashboard');
+    Route::get('/saya', [DashboardController::class, 'index'])->name('user.dashboard');
 });
 
 
@@ -160,12 +160,30 @@ Route::middleware('auth')->group(function () {
 
     Route::prefix('deposit')->as('deposit.')->group(function () {
         Route::get('/', [DepositController::class, 'index'])->name('index');
-        Route::post('/create', [DepositController::class, 'createTransaction'])->name('create');
-        Route::get('/callback', [DepositController::class, 'handleCallback'])->name('callback');
         Route::get('/riwayat', [DepositController::class, 'riwayat'])->name('riwayat');
-        Route::get('/continue', [DepositController::class, 'continuePayment'])->name('continue');
-        Route::post('/cancel', [DepositController::class, 'cancelTransaction'])->name('cancel');
+        Route::get('/deposit/continue/{order_id}', [DepositController::class, 'continuePayment'])->name('continue');
+        Route::post('/deposit/cancel', [DepositController::class, 'cancelTransaction'])
+            ->name('cancelqris');
         Route::get('/check-pending', [DepositController::class, 'checkPendingPayment'])->name('checkPending');
+        // routes/web.php
+        Route::get('/payment/{order_id}', [DepositController::class, 'payment'])->name('payment');
+
+        Route::post('/deposit/qris', [DepositController::class, 'createQRIS'])->name('create_qris');
+        Route::post('/deposit/create-va', [DepositController::class, 'createVA'])->name('create_va');
+        Route::get('/deposit/va/payment/{order_id}', [DepositController::class, 'vaPayment'])->name('va.payment');
+
+
+
+        Route::post('/deposit/ewallet/create', [DepositController::class, 'createEWallet'])->name('create_ewallet');
+
+        // E-Wallet payment page
+        Route::get('/deposit/ewallet/payment/{order_id}', [DepositController::class, 'ewalletPayment'])->name('ewallet.payment');
+
+        // E-Wallet callback (success/failure redirect)
+        Route::get('/deposit/ewallet/callback/{order_id}', [DepositController::class, 'ewalletCallback'])->name('ewallet.callback');
+        Route::post('/deposit/cancel-ewallet', [DepositController::class, 'cancelEWallet'])
+            ->name('cancel-ewallet');
+        Route::post('/deposit/check-status', [DepositController::class, 'checkVAStatus'])->name('check-status');
     });
 
     Route::prefix('bank')->as('bank.')->group(function () {
@@ -187,9 +205,9 @@ Route::middleware('auth')->group(function () {
         Route::get('/history', [WithdrawController::class, 'history'])->name('history');
     });
 });
-
-Route::post('/deposit/notification', [DepositController::class, 'handleNotification'])
-    ->withoutMiddleware(['web']) // Hanya hilangkan web middleware, biarkan csrf default
-    ->name('deposit.notification');
+Route::post('/v2/qris/notify', [DepositController::class, 'handleQrisNotification'])
+    ->name('paylabs.notification');
+Route::post('/v2/ewallet/notify', [DepositController::class, 'handleEWalletNotification'])->name('ewallet.notify');
+Route::post('/v2/va/notify', [DepositController::class, 'handleVANotification'])->name('deposit.va.notify');
 
 require __DIR__ . '/auth.php';

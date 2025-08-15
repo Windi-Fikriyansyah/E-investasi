@@ -20,6 +20,11 @@
                         </div>
                     </div>
                 </div>
+            @else
+                <div class="alert alert-warning">
+                    <i class="fas fa-exclamation-triangle"></i> Bank belum ada ditambahkan.
+                    <a href="{{ route('bank.index') }}" class="alert-link">Tambahkan rekening bank</a>
+                </div>
             @endif
         </div>
 

@@ -3,7 +3,7 @@
 @section('content')
     <div class="tabs-container">
         <div class="tabs">
-            <div class="tab active" data-tab="all">Semua</div>
+            <div class="tab active" data-tab="all">Tentang Kami</div>
             @foreach ($categories as $category)
                 <div class="tab" data-tab="category-{{ str_replace(' ', '-', strtolower($category->kategori)) }}">
                     {{ $category->kategori }}</div>
@@ -12,31 +12,109 @@
     </div>
 
     <div class="tab-content active" id="all">
-        <div class="investment-grid">
-            @foreach ($products as $product)
-                <div class="investment-card" data-product-id="{{ $product->id }}">
-                    <!-- Product Name - Full Width -->
-                    <div class="card-header">
-                        <h3 class="investment-title">{{ $product->nama_produk }}</h3>
+        <div class="about-us-container">
+            <section class="about-hero">
+                <div class="hero-content">
+                    <h1>Tentang Perusahaan Kami</h1>
+                    <p class="tagline">Menjadi pelopor dalam revolusi transportasi berkelanjutan</p>
+                </div>
+            </section>
+
+            <section class="about-mission">
+                <div class="mission-statement">
+                    <h2>Visi Kami</h2>
+                    <p>Mengubah wajah transportasi modern dengan solusi listrik yang inovatif, berkelanjutan, dan
+                        menguntungkan bagi semua pihak.</p>
+                </div>
+            </section>
+
+            <section class="about-content-section">
+                <div class="about-grid">
+                    <div class="about-images">
+                        <div class="image-wrapper">
+                            <img src="{{ asset('gambar_perusahaan.jpeg') }}" alt="Kantor Perusahaan" class="about-image">
+                            <div class="image-caption">Kantor Pusat Kami</div>
+                        </div>
+                        <div class="image-wrapper">
+                            <img src="{{ asset('gambar_perusahaan1.jpeg') }}" alt="Tim Perusahaan" class="about-image">
+                            <div class="image-caption">Tim Profesional Kami</div>
+                        </div>
                     </div>
 
-                    <!-- Two Column Layout -->
-                    <div class="card-body">
-                        <!-- Left Column - Image -->
+                    <div class="about-text-content">
+                        <h2>Mengapa Memilih Kami?</h2>
+                        <div class="about-text-paragraphs">
+                            <p>Kami menawarkan berbagai jenis kendaraan listrik yang dirancang untuk menghadirkan
+                                fleksibilitas, efisiensi, dan performa dalam mobilitas modern. Setiap unit tidak hanya
+                                menjadi solusi transportasi, tetapi juga merupakan aset potensial dalam portofolio investasi
+                                Anda — membuka peluang di sektor energi bersih dan teknologi masa depan yang terus
+                                berkembang.</p>
+
+                            <p>Mulai dari model berperforma tinggi untuk penggemar kecepatan, kendaraan serbaguna untuk
+                                mobilitas harian, hingga desain ringkas yang cocok menjelajahi kota dengan lincah — semua
+                                dirancang untuk memenuhi kebutuhan gaya hidup urban yang dinamis sekaligus menghadirkan
+                                nilai tambah bagi investor visioner.</p>
+
+                            <p>Berinvestasi di sektor ini berarti turut mendukung transformasi mobilitas ramah lingkungan,
+                                sembari memanfaatkan momentum pertumbuhan global dari tren kendaraan listrik. Ini adalah
+                                langkah strategis bagi siapa saja yang ingin menggabungkan keberlanjutan dengan potensi
+                                imbal hasil jangka panjang.</p>
+                        </div>
+
+                        <div class="about-features">
+                            <div class="feature-item">
+                                <div class="feature-icon">
+                                    <i class="fas fa-bolt"></i>
+                                </div>
+                                <h3>Inovasi Teknologi</h3>
+                                <p>Menggunakan teknologi terbaru untuk efisiensi maksimal</p>
+                            </div>
+                            <div class="feature-item">
+                                <div class="feature-icon">
+                                    <i class="fas fa-leaf"></i>
+                                </div>
+                                <h3>Ramah Lingkungan</h3>
+                                <p>Berkontribusi pada pengurangan emisi karbon</p>
+                            </div>
+                            <div class="feature-item">
+                                <div class="feature-icon">
+                                    <i class="fas fa-chart-line"></i>
+                                </div>
+                                <h3>Potensi Investasi</h3>
+                                <p>Peluang pertumbuhan jangka panjang yang menguntungkan</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    @foreach ($categories as $category)
+        <div class="tab-content" id="category-{{ str_replace(' ', '-', strtolower($category->kategori)) }}">
+            <div class="investment-grid">
+                @foreach ($products->where('kategori', $category->kategori) as $product)
+                    <div class="investment-card" data-product-id="{{ $product->id }}">
                         <div class="product-image-container">
                             <img src="{{ $product->gambar ? asset('storage/' . $product->gambar) : asset('images/default-investment.jpg') }}"
                                 alt="{{ $product->nama_produk }}" class="product-image">
+
                         </div>
 
-                        <!-- Right Column - Details -->
                         <div class="card-content">
+                            <div class="card-header">
+                                <h3 class="investment-title">{{ $product->nama_produk }}</h3>
+                            </div>
+
+
+
                             <div class="investment-details">
                                 <div class="detail-item">
                                     <div class="detail-icon">
                                         <i class="fas fa-tag"></i>
                                     </div>
                                     <div class="detail-content">
-                                        <span class="detail-label">Harga Produk</span>
+                                        <span class="detail-label">Harga</span>
                                         <span
                                             class="detail-value">Rp{{ number_format($product->harga, 0, ',', '.') }}</span>
                                     </div>
@@ -47,7 +125,7 @@
                                         <i class="fas fa-clock"></i>
                                     </div>
                                     <div class="detail-content">
-                                        <span class="detail-label">Durasi Kontrak</span>
+                                        <span class="detail-label">Siklus</span>
                                         <span class="detail-value">{{ $product->durasi }} Hari</span>
                                     </div>
                                 </div>
@@ -62,7 +140,6 @@
                                             class="detail-value profit">Rp{{ number_format($product->pendapatan_harian, 0, ',', '.') }}</span>
                                     </div>
                                 </div>
-
                                 <div class="detail-item">
                                     <div class="detail-icon">
                                         <i class="fas fa-money-bill-wave"></i>
@@ -73,6 +150,8 @@
                                             class="detail-value">Rp{{ number_format($product->total_pendapatan, 0, ',', '.') }}</span>
                                     </div>
                                 </div>
+
+
                             </div>
 
                             <div class="investment-description">
@@ -87,94 +166,217 @@
                             </div>
                         </div>
                     </div>
-                </div>
-            @endforeach
-        </div>
-    </div>
-
-    @foreach ($categories as $category)
-        <div class="tab-content" id="category-{{ str_replace(' ', '-', strtolower($category->kategori)) }}">
-            <div class="investment-grid">
-                @foreach ($products->where('kategori', $category->kategori) as $product)
-                    <div class="investment-card" data-product-id="{{ $product->id }}">
-                        <!-- Product Name - Full Width -->
-                        <div class="card-header">
-                            <h3 class="investment-title">{{ $product->nama_produk }}</h3>
-                        </div>
-
-                        <!-- Two Column Layout -->
-                        <div class="card-body">
-                            <!-- Left Column - Image -->
-                            <div class="product-image-container">
-                                <img src="{{ $product->gambar ? asset('storage/' . $product->gambar) : asset('images/default-investment.jpg') }}"
-                                    alt="{{ $product->nama_produk }}" class="product-image">
-                            </div>
-
-                            <!-- Right Column - Details -->
-                            <div class="card-content">
-                                <div class="investment-details">
-                                    <div class="detail-item">
-                                        <div class="detail-icon">
-                                            <i class="fas fa-tag"></i>
-                                        </div>
-                                        <div class="detail-content">
-                                            <span class="detail-label">Harga Produk</span>
-                                            <span
-                                                class="detail-value">Rp{{ number_format($product->harga, 0, ',', '.') }}</span>
-                                        </div>
-                                    </div>
-
-                                    <div class="detail-item">
-                                        <div class="detail-icon">
-                                            <i class="fas fa-clock"></i>
-                                        </div>
-                                        <div class="detail-content">
-                                            <span class="detail-label">Durasi Kontrak</span>
-                                            <span class="detail-value">{{ $product->durasi }} Hari</span>
-                                        </div>
-                                    </div>
-
-                                    <div class="detail-item">
-                                        <div class="detail-icon">
-                                            <i class="fas fa-coins"></i>
-                                        </div>
-                                        <div class="detail-content">
-                                            <span class="detail-label">Pendapatan Perhari</span>
-                                            <span
-                                                class="detail-value profit">Rp{{ number_format($product->pendapatan_harian, 0, ',', '.') }}</span>
-                                        </div>
-                                    </div>
-                                    <div class="detail-item">
-                                        <div class="detail-icon">
-                                            <i class="fas fa-money-bill-wave"></i>
-                                        </div>
-                                        <div class="detail-content">
-                                            <span class="detail-label">Total Pendapatan</span>
-                                            <span
-                                                class="detail-value">Rp{{ number_format($product->total_pendapatan, 0, ',', '.') }}</span>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="investment-description">
-                                    <p>{{ Str::limit($product->keterangan, 80) }}</p>
-                                </div>
-
-                                <div class="card-actions">
-                                    <button class="btn-invest" data-product-id="{{ $product->id }}">
-                                        <i class="fas fa-plus"></i>
-                                        Beli Sekarang
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
                 @endforeach
             </div>
         </div>
     @endforeach
 
+
+
     <style>
+        .about-us-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        .about-hero {
+            background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%);
+            color: white;
+            padding: 4rem 2rem;
+            text-align: center;
+            border-radius: 1rem;
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .about-hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.1);
+            z-index: 1;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .about-hero h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .tagline {
+            font-size: 1.25rem;
+            opacity: 0.9;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .about-mission {
+            background-color: #f8fafc;
+            padding: 3rem 2rem;
+            border-radius: 1rem;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .mission-statement h2 {
+            font-size: 1.75rem;
+            color: #1e293b;
+            margin-bottom: 1rem;
+        }
+
+        .mission-statement p {
+            font-size: 1.1rem;
+            color: #475569;
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        .about-content-section {
+            margin: 3rem 0;
+        }
+
+        .about-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+        }
+
+        @media (min-width: 992px) {
+            .about-grid {
+                grid-template-columns: 1fr 1fr;
+                align-items: center;
+            }
+        }
+
+        .about-images {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+
+        @media (min-width: 768px) {
+            .about-images {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .image-wrapper {
+            position: relative;
+            border-radius: 0.75rem;
+            overflow: hidden;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        .about-image {
+            width: 100%;
+            height: auto;
+            display: block;
+            transition: transform 0.3s ease;
+        }
+
+        .image-wrapper:hover .about-image {
+            transform: scale(1.03);
+        }
+
+        .image-caption {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 0.75rem;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+
+        .about-text-content h2 {
+            font-size: 1.75rem;
+            color: #1e293b;
+            margin-bottom: 1.5rem;
+            position: relative;
+            padding-bottom: 0.5rem;
+        }
+
+        .about-text-content h2::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 60px;
+            height: 3px;
+            background: #2563eb;
+        }
+
+        .about-text-paragraphs p {
+            font-size: 1rem;
+            color: #475569;
+            line-height: 1.7;
+            margin-bottom: 1.5rem;
+        }
+
+        .about-features {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        @media (min-width: 640px) {
+            .about-features {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        .feature-item {
+            background: #f8fafc;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            text-align: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .feature-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+
+        .feature-icon {
+            width: 60px;
+            height: 60px;
+            background: #2563eb;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            font-size: 1.5rem;
+        }
+
+        .feature-item h3 {
+            font-size: 1.1rem;
+            color: #1e293b;
+            margin-bottom: 0.5rem;
+        }
+
+        .feature-item p {
+            font-size: 0.9rem;
+            color: #64748b;
+            line-height: 1.5;
+        }
+
         /* Main Content Styles */
         .section-header {
             margin-bottom: 1.5rem;
@@ -247,34 +449,10 @@
             box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
         }
 
-        /* Card Header - Full Width Product Name */
-        .card-header {
-            padding: 1.25rem 1.25rem 0.75rem;
-            border-bottom: 1px solid #e2e8f0;
-        }
-
-        .investment-title {
-            font-size: 1.125rem;
-            font-weight: 600;
-            margin: 0;
-            color: #1e293b;
-            text-align: center;
-        }
-
-        /* Card Body - Two Column Layout */
-        .card-body {
-            display: flex;
-            gap: 1rem;
-            padding: 1.25rem;
-        }
-
-        /* Left Column - Image */
         .product-image-container {
-            flex: 0 0 40%;
-            height: 200px;
-            border-radius: 0.75rem;
-            overflow: hidden;
             position: relative;
+            height: 160px;
+            overflow: hidden;
         }
 
         .product-image {
@@ -288,13 +466,6 @@
             transform: scale(1.05);
         }
 
-        /* Right Column - Details */
-        .card-content {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-        }
-
         .category-badge {
             position: absolute;
             top: 1rem;
@@ -306,6 +477,21 @@
             font-weight: 600;
             color: #2563eb;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-content {
+            padding: 0 1.25rem 1.25rem;
+        }
+
+        .card-header {
+            padding: 1rem 0 0.5rem;
+        }
+
+        .investment-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+            color: #1e293b;
         }
 
         /* Investment Stats */
@@ -340,24 +526,21 @@
 
         /* Investment Details */
         .investment-details {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            gap: 0.25rem;
-            margin-bottom: 0.75rem;
-            height: 100%;
+            padding: 0.75rem 0;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem;
         }
 
         .detail-item {
             display: flex;
             align-items: center;
-            padding: 0.25rem 0;
+            padding: 0.5rem 0;
         }
 
         .detail-icon {
-            width: 1.75rem;
-            height: 1.75rem;
+            width: 2rem;
+            height: 2rem;
             background: rgba(37, 99, 235, 0.1);
             border-radius: 50%;
             display: flex;
@@ -366,7 +549,6 @@
             margin-right: 0.75rem;
             color: #2563eb;
             flex-shrink: 0;
-            font-size: 0.875rem;
         }
 
         .detail-content {
@@ -393,17 +575,16 @@
 
         /* Description */
         .investment-description {
+            padding: 0.5rem 0 1rem;
             font-size: 0.875rem;
             color: #64748b;
-            line-height: 1.4;
-            margin-bottom: 0.75rem;
-            flex-shrink: 0;
+            line-height: 1.5;
+            border-bottom: 1px solid #e2e8f0;
         }
 
         /* Card Actions */
         .card-actions {
-            margin-top: auto;
-            flex-shrink: 0;
+            padding: 1rem 0 0;
         }
 
         .btn-invest {
@@ -541,56 +722,9 @@
         }
 
         /* Responsive Styles */
-        @media (max-width: 640px) {
-            .card-body {
-                gap: 0.75rem;
-            }
-
-            .product-image-container {
-                flex: 0 0 35%;
-                height: 140px;
-            }
-
-            .detail-icon {
-                width: 1.5rem;
-                height: 1.5rem;
-                font-size: 0.75rem;
-                margin-right: 0.5rem;
-            }
-
-            .detail-label {
-                font-size: 0.7rem;
-            }
-
-            .detail-value {
-                font-size: 0.8rem;
-            }
-
-            .investment-description {
-                font-size: 0.8rem;
-            }
-
-            .btn-invest {
-                padding: 0.75rem;
-                font-size: 0.8rem;
-            }
-
-            .investment-title {
-                font-size: 1rem;
-            }
-
-            .card-header {
-                padding: 1rem 1rem 0.5rem;
-            }
-
-            .card-body {
-                padding: 1rem;
-            }
-        }
-
-        @media (min-width: 641px) {
+        @media (min-width: 640px) {
             .investment-grid {
-                grid-template-columns: repeat(1, 1fr);
+                grid-template-columns: repeat(2, 1fr);
             }
 
             .testimonial-grid {
@@ -604,19 +738,13 @@
             }
 
             .investment-grid {
-                grid-template-columns: repeat(2, 1fr);
+                grid-template-columns: repeat(3, 1fr);
             }
         }
 
         @media (min-width: 1024px) {
             .investment-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-
-        @media (min-width: 1200px) {
-            .investment-grid {
-                grid-template-columns: repeat(3, 1fr);
+                grid-template-columns: repeat(4, 1fr);
             }
         }
     </style>

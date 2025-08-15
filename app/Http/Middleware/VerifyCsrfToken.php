@@ -12,7 +12,8 @@ class VerifyCsrfToken extends Middleware
      * @var array<int, string>
      */
     protected $except = [
-        'deposit/notification',
+        'v2/qris/notify',
+        '/v2/ewallet/notify',
         //
     ];
 }

@@ -81,12 +81,12 @@
                         <option value="BRI">BRI</option>
                         <option value="Mandiri">Mandiri</option>
                         <option value="BNI">BNI</option>
-                        <option value="CIMB Niaga">CIMB Niaga</option>
-                        <option value="Permata">Permata</option>
-                        <option value="Danamon">Danamon</option>
-                        <option value="Maybank">Maybank</option>
-                        <option value="OCBC NISP">OCBC NISP</option>
                         <option value="Bank Jago">Bank Jago</option>
+                        <option value="Seabank">Seabank</option>
+                        <option value="DANA">DANA</option>
+                        <option value="GOPAY">GOPAY</option>
+                        <option value="OVO">OVO</option>
+                        <option value="SHOPEEPAY">SHOPEEPAY</option>
                     </select>
                 </div>
 

@@ -2,15 +2,15 @@
 
 @section('content')
     <div class="deposit-history">
-        <div class="section-header">
-            <h2 class="section-title">Riwayat Deposit</h2>
-        </div>
 
-        <div class="tabs">
-            <div class="tab active" data-tab="all">Semua</div>
-            <div class="tab" data-tab="success">Berhasil</div>
-            <div class="tab" data-tab="pending">Pending</div>
-            <div class="tab" data-tab="failed">Gagal</div>
+
+        <div class="tabs-container">
+            <div class="tabs">
+                <div class="tab active" data-tab="all">Semua</div>
+                <div class="tab" data-tab="completed">Berhasil</div>
+                <div class="tab" data-tab="pending">Pending</div>
+                <div class="tab" data-tab="failed">Gagal</div>
+            </div>
         </div>
 
         <div class="tab-content active" id="all">
@@ -19,7 +19,7 @@
                     <div class="deposit-card {{ $deposit->status }}">
                         <div class="deposit-info">
                             <div class="deposit-icon">
-                                @if ($deposit->status == 'success')
+                                @if ($deposit->status == 'completed')
                                     <i class="fas fa-check-circle"></i>
                                 @elseif($deposit->status == 'pending')
                                     <i class="fas fa-clock"></i>
@@ -40,13 +40,13 @@
                             </div>
                         </div>
                         <div class="deposit-status">
-                            @if ($deposit->status == 'success')
-                                <span class="status-badge success">Berhasil</span>
+                            @if ($deposit->status == 'completed')
+                                <span class="status-badge completed">Berhasil</span>
                             @elseif($deposit->status == 'pending')
                                 <span class="status-badge pending">Menunggu</span>
                                 <a href="{{ route('deposit.continue', ['order_id' => $deposit->order_id]) }}"
                                     class="complete-payment-btn">
-                                    Selesaikan Pembayaran
+                                    Lanjutkan Pembayaran
                                 </a>
                             @else
                                 <span class="status-badge failed">
@@ -66,10 +66,10 @@
             </div>
         </div>
 
-        <div class="tab-content" id="success">
+        <div class="tab-content" id="completed">
             <div class="deposit-list">
-                @foreach ($deposits->where('status', 'success') as $deposit)
-                    <div class="deposit-card success">
+                @foreach ($deposits->where('status', 'completed') as $deposit)
+                    <div class="deposit-card completed">
                         <div class="deposit-info">
                             <div class="deposit-icon">
                                 <i class="fas fa-check-circle"></i>
@@ -87,12 +87,12 @@
                             </div>
                         </div>
                         <div class="deposit-status">
-                            <span class="status-badge success">Berhasil</span>
+                            <span class="status-badge completed">Berhasil</span>
                         </div>
                     </div>
                 @endforeach
 
-                @if ($deposits->where('status', 'success')->isEmpty())
+                @if ($deposits->where('status', 'completed')->isEmpty())
                     <div class="empty-state">
                         <div class="empty-icon">
                             <i class="fas fa-wallet"></i>
@@ -185,26 +185,71 @@
     </div>
 
     <style>
-        /* CSS sebelumnya tetap sama */
         .deposit-history {
-            padding: 1rem;
+            padding: 0;
+            margin-bottom: 25px;
+            color: var(--white);
+        }
+
+        .tabs-container {
+            margin: 1.5rem 0;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: var(--rounded-lg);
+            padding: 0.5rem;
+        }
+
+        .tabs {
+            display: flex;
+            justify-content: space-between;
+            background: transparent;
+            border-radius: var(--rounded-md);
+            overflow: hidden;
+        }
+
+        .tab {
+            flex: 1;
+            text-align: center;
+            padding: 0.75rem 0.5rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            color: rgba(255, 255, 255, 0.7);
+            transition: all 0.3s ease;
+            border-radius: var(--rounded-md);
+        }
+
+        .tab.active {
+            background: rgba(255, 255, 255, 0.9);
+            color: var(--primary);
+            font-weight: 600;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
         }
 
         .deposit-list {
             display: flex;
             flex-direction: column;
             gap: 1rem;
+            margin-top: 1rem;
         }
 
         .deposit-card {
-            background-color: var(--white);
-            border-radius: var(--rounded-md);
-            padding: 1rem;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: var(--rounded-lg);
+            padding: 1.25rem;
             box-shadow: var(--shadow-sm);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            transition: transform 0.2s ease;
+            transition: all 0.2s ease;
+            color: var(--text);
         }
 
         .deposit-card:hover {
@@ -216,6 +261,7 @@
             display: flex;
             align-items: center;
             gap: 1rem;
+            flex: 1;
         }
 
         .deposit-icon {
@@ -228,9 +274,9 @@
             font-size: 1.5rem;
         }
 
-        .deposit-card.success .deposit-icon {
+        .deposit-card.completed .deposit-icon {
             background-color: rgba(16, 185, 129, 0.1);
-            color: var(--accent);
+            color: #10b981;
         }
 
         .deposit-card.pending .deposit-icon {
@@ -239,6 +285,11 @@
         }
 
         .deposit-card.failed .deposit-icon {
+            background-color: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+        }
+
+        .deposit-card.cancelled .deposit-icon {
             background-color: rgba(239, 68, 68, 0.1);
             color: #ef4444;
         }
@@ -280,9 +331,9 @@
             font-weight: 600;
         }
 
-        .status-badge.success {
+        .status-badge.completed {
             background-color: rgba(16, 185, 129, 0.1);
-            color: var(--accent);
+            color: #10b981;
         }
 
         .status-badge.pending {
@@ -297,33 +348,42 @@
 
         .complete-payment-btn {
             padding: 0.5rem 1rem;
-            background-color: var(--accent);
+            background-color: var(--primary);
             color: white;
             border-radius: var(--rounded-md);
             font-size: 0.75rem;
             font-weight: 600;
             text-decoration: none;
-            transition: background-color 0.2s ease;
+            transition: all 0.2s ease;
+            white-space: nowrap;
         }
 
         .complete-payment-btn:hover {
-            background-color: #0e9f6e;
+            background-color: var(--primary-dark);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-sm);
         }
 
         /* Empty State */
         .empty-state {
             text-align: center;
-            padding: 2rem;
+            padding: 3rem 1rem;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: var(--rounded-lg);
+            margin-top: 1rem;
+            color: var(--text);
         }
 
         .empty-icon {
             font-size: 3rem;
-            color: var(--gray);
+            color: var(--primary);
             margin-bottom: 1rem;
+            opacity: 0.7;
         }
 
         .empty-text {
             color: var(--text-light);
+            font-size: 0.925rem;
         }
 
         @media (max-width: 640px) {
@@ -334,10 +394,17 @@
             }
 
             .deposit-status {
-                align-self: flex-end;
+                width: 100%;
+                align-self: stretch;
                 flex-direction: row;
                 align-items: center;
+                justify-content: space-between;
                 gap: 0.5rem;
+            }
+
+            .complete-payment-btn {
+                flex-grow: 1;
+                text-align: center;
             }
         }
     </style>

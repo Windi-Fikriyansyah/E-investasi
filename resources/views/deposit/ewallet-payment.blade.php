@@ -4,8 +4,8 @@
     <div class="payment-container">
         <div class="card">
             <h2>
-                <i class="fas fa-qrcode"></i>
-                Pembayaran QRIS
+                <i class="fas fa-wallet"></i>
+                Pembayaran {{ $deposit->payment_method ?? $deposit->paymentType }}
             </h2>
 
             <div class="payment-info">
@@ -17,40 +17,88 @@
                 <div class="order-info">
                     <small class="text-muted">Order ID: {{ $deposit->order_id }}</small>
                 </div>
+
+                <div class="ewallet-info">
+                    <div class="ewallet-badge">
+                        @switch($deposit->payment_method)
+                            @case('DANABALANCE')
+                                <img src="{{ asset('images/dana.svg') }}" alt="DANA" class="ewallet-logo">
+                                <span>DANA</span>
+                            @break
+
+                            @case('SHOPEEBALANCE')
+                                <img src="{{ asset('images/ShopeePay.svg') }}" alt="ShopeePay" class="ewallet-logo">
+                                <span>ShopeePay</span>
+                            @break
+
+                            @case('LINKAJABALANCE')
+                                <img src="{{ asset('images/linkaja.svg') }}" alt="LinkAja" class="ewallet-logo">
+                                <span>LinkAja</span>
+                            @break
+
+                            @case('OVOBALANCE')
+                                <img src="{{ asset('images/OVO.svg') }}" alt="OVO" class="ewallet-logo">
+                                <span>OVO</span>
+                            @break
+
+                            @case('GOPAYBALANCE')
+                                <img src="{{ asset('images/gopay.svg') }}" alt="GoPay" class="ewallet-logo">
+                                <span>GoPay</span>
+                            @break
+
+                            @default
+                                <span>{{ $deposit->payment_method }}</span>
+                        @endswitch
+                    </div>
+                </div>
             </div>
 
-            @if ($deposit->qrCode || $deposit->qrisUrl)
-                <div class="qr-section">
-                    <div class="qr-container">
-                        @if ($deposit->qrisUrl)
-                            <img src="{{ $deposit->qrisUrl }}" alt="QRIS Code" class="qr-image">
-                        @else
-                            <div id="qrcode"></div>
-                        @endif
-                    </div>
-
+            @if ($deposit->payment_url || $deposit->app_deeplink)
+                <div class="payment-section">
                     <div class="payment-instructions">
                         <h4>Cara Pembayaran:</h4>
                         <ol>
-                            <li>Buka aplikasi e-wallet atau mobile banking Anda</li>
-                            <li>Pilih menu Scan QR atau QRIS</li>
-                            <li>Arahkan kamera ke QR Code di atas</li>
-                            <li>Pastikan nominal sudah sesuai</li>
-                            <li>Konfirmasi pembayaran</li>
+                            @if ($deposit->payment_method === 'OVOBALANCE')
+                                <li>Klik tombol "Buka Aplikasi OVO" di bawah</li>
+                                <li>Masukkan PIN OVO Anda</li>
+                                <li>Konfirmasi pembayaran</li>
+                            @else
+                                <li>Klik tombol "Lanjutkan Pembayaran" di bawah</li>
+                                <li>Anda akan diarahkan ke aplikasi {{ $deposit->payment_method }}</li>
+                                <li>Login ke akun Anda jika diminta</li>
+                                <li>Pastikan nominal sudah sesuai</li>
+                                <li>Konfirmasi pembayaran</li>
+                            @endif
                         </ol>
                     </div>
 
-                    @if ($deposit->expiredTime)
+                    @if ($deposit->expired_time)
                         <div class="countdown-section">
                             <span class="countdown-label">Sisa Waktu:</span>
                             <span id="countdown" class="countdown-timer">Loading...</span>
                         </div>
                     @endif
+
+                    <div class="payment-buttons">
+                        @if ($deposit->app_deeplink)
+                            <a href="{{ $deposit->app_deeplink }}" class="btn btn-primary payment-btn">
+                                <i class="fas fa-mobile-alt"></i>
+                                Buka Aplikasi
+                            </a>
+                        @endif
+
+                        @if ($deposit->payment_url)
+                            <a href="{{ $deposit->payment_url }}" target="_blank" class="btn btn-primary payment-btn">
+                                <i class="fas fa-external-link-alt"></i>
+                                Lanjutkan Pembayaran
+                            </a>
+                        @endif
+                    </div>
                 </div>
             @else
                 <div class="error-section">
                     <i class="fas fa-exclamation-triangle"></i>
-                    <p>QR Code tidak tersedia. Silakan coba lagi.</p>
+                    <p>URL pembayaran tidak tersedia. Silakan coba lagi.</p>
                 </div>
             @endif
 
@@ -67,7 +115,8 @@
 
         <div class="help-section">
             <h4>Butuh Bantuan?</h4>
-            <p>Jika mengalami kendala, silakan hubungi customer service kami.</p>
+            <p>Jika mengalami kendala, silakan hubungi customer service kami atau coba refresh halaman ini untuk melihat
+                status terbaru.</p>
         </div>
     </div>
 
@@ -109,6 +158,7 @@
             display: flex;
             flex-direction: column;
             gap: 0.5rem;
+            margin-bottom: 1rem;
         }
 
         .amount-display .label {
@@ -123,28 +173,31 @@
         }
 
         .order-info {
+            margin-bottom: 1rem;
+        }
+
+        .ewallet-info {
             margin-top: 1rem;
         }
 
-        .qr-section {
-            text-align: center;
+        .ewallet-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--secondary);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: 600;
+        }
+
+        .ewallet-logo {
+            width: 24px;
+            height: 24px;
+            object-fit: contain;
+        }
+
+        .payment-section {
             margin-bottom: 2rem;
-        }
-
-        .qr-container {
-            background: white;
-            padding: 1.5rem;
-            border-radius: var(--rounded-md);
-            border: 2px dashed var(--gray);
-            margin-bottom: 1.5rem;
-            display: inline-block;
-        }
-
-        .qr-image {
-            max-width: 250px;
-            max-height: 250px;
-            width: 100%;
-            height: auto;
         }
 
         .payment-instructions {
@@ -177,6 +230,7 @@
             padding: 1rem;
             border-radius: var(--rounded-md);
             margin-bottom: 1.5rem;
+            text-align: center;
         }
 
         .countdown-label {
@@ -189,10 +243,43 @@
             font-weight: 600;
         }
 
+        .payment-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 1.5rem;
+        }
+
+        .payment-btn {
+            padding: 1rem 2rem;
+            font-size: 1rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--primary);
+            color: white;
+            text-decoration: none;
+            border-radius: var(--rounded-md);
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+            min-width: 200px;
+            justify-content: center;
+        }
+
+        .payment-btn:hover {
+            background: var(--primary-dark);
+            color: white;
+            text-decoration: none;
+        }
+
         .error-section {
             text-align: center;
             padding: 2rem;
             color: #ef4444;
+            margin-bottom: 1.5rem;
         }
 
         .error-section i {
@@ -266,6 +353,14 @@
                 font-size: 1.5rem;
             }
 
+            .payment-buttons {
+                flex-direction: column;
+            }
+
+            .payment-btn {
+                min-width: auto;
+            }
+
             .action-buttons {
                 flex-direction: column;
             }
@@ -276,77 +371,43 @@
         }
     </style>
 
-    @if ($deposit->qrCode && !$deposit->qrisUrl)
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
-    @endif
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
-        // Generate QR Code jika tidak ada qrisUrl
-        @if ($deposit->qrCode && !$deposit->qrisUrl)
-            document.addEventListener('DOMContentLoaded', function() {
-                new QRious({
-                    element: document.getElementById('qrcode'),
-                    value: '{{ $deposit->qrCode }}',
-                    size: 250,
-                    background: 'white',
-                    foreground: 'black'
-                });
-            });
-        @endif
-
         // Countdown timer
-        @if ($deposit->expiredTime)
-            document.addEventListener('DOMContentLoaded', function() {
-                let expiredTime = '{{ $deposit->expiredTime }}';
-                if (expiredTime) {
-                    // Parse expired time (format: YmdHis)
-                    let year = expiredTime.substring(0, 4);
-                    let month = expiredTime.substring(4, 6);
-                    let day = expiredTime.substring(6, 8);
-                    let hour = expiredTime.substring(8, 10);
-                    let minute = expiredTime.substring(10, 12);
-                    let second = expiredTime.substring(12, 14);
+        @if ($deposit->expired_time)
+            let expiredTime = '{{ $deposit->expired_time }}';
+            if (expiredTime) {
+                let expiredDate = new Date(expiredTime);
 
-                    // Create date object in local timezone
-                    let expiredDate = new Date(
-                        parseInt(year),
-                        parseInt(month) - 1, // Months are 0-based
-                        parseInt(day),
-                        parseInt(hour),
-                        parseInt(minute),
-                        parseInt(second)
-                    );
+                function updateCountdown() {
+                    let now = new Date();
+                    let diff = expiredDate - now;
 
-                    function updateCountdown() {
-                        let now = new Date();
-                        let diff = expiredDate - now;
-
-                        if (diff <= 0) {
-                            document.getElementById('countdown').textContent = 'Waktu habis';
-                            checkPaymentStatus();
-                            return;
-                        }
-
-                        // Calculate hours, minutes, seconds
-                        let hours = Math.floor(diff / (1000 * 60 * 60));
-                        diff -= hours * (1000 * 60 * 60);
-                        let minutes = Math.floor(diff / (1000 * 60));
-                        diff -= minutes * (1000 * 60);
-                        let seconds = Math.floor(diff / 1000);
-
-                        // Format as HH:MM:SS
-                        document.getElementById('countdown').textContent =
-                            hours.toString().padStart(2, '0') + ':' +
-                            minutes.toString().padStart(2, '0') + ':' +
-                            seconds.toString().padStart(2, '0');
+                    if (diff <= 0) {
+                        document.getElementById('countdown').textContent = 'Waktu habis';
+                        checkPaymentStatus();
+                        return;
                     }
 
-                    updateCountdown();
-                    setInterval(updateCountdown, 1000);
-                }
-            });
-        @endif
+                    // Calculate hours, minutes, and seconds
+                    let hours = Math.floor(diff / 3600000);
+                    let minutes = Math.floor((diff % 3600000) / 60000);
+                    let seconds = Math.floor((diff % 60000) / 1000);
 
+                    // Format as HH:MM:SS
+                    let formattedHours = hours.toString().padStart(2, '0');
+                    let formattedMinutes = minutes.toString().padStart(2, '0');
+                    let formattedSeconds = seconds.toString().padStart(2, '0');
+
+                    document.getElementById('countdown').textContent =
+                        formattedHours + ':' + formattedMinutes + ':' + formattedSeconds;
+                }
+
+                updateCountdown();
+                setInterval(updateCountdown, 1000);
+            }
+        @endif
         // Auto check payment status
         let checkInterval = setInterval(function() {
             checkPaymentStatus(false);
@@ -407,31 +468,20 @@
                 cancelButtonText: 'Tidak'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    // Show loading indicator
-                    Swal.fire({
-                        title: 'Memproses...',
-                        allowOutsideClick: false,
-                        didOpen: () => {
-                            Swal.showLoading();
-                        }
-                    });
-
-                    fetch('{{ route('deposit.cancelqris') }}', {
+                    // Panggil API untuk membatalkan transaksi
+                    fetch('{{ route('deposit.cancel-ewallet') }}', {
                             method: 'POST',
                             headers: {
-                                'Content-Type': 'application/json',
                                 'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                'Content-Type': 'application/json',
                                 'Accept': 'application/json',
                             },
                             body: JSON.stringify({
-                                order_id: '{{ $deposit->order_id }}',
-                                platform_trade_no: '{{ $deposit->platformTradeNo ?? '' }}',
-                                qr_code: '{{ $deposit->qrCode ?? '' }}'
+                                order_id: '{{ $deposit->order_id }}'
                             })
                         })
                         .then(response => response.json())
                         .then(data => {
-                            Swal.close();
                             if (data.success) {
                                 clearInterval(checkInterval);
                                 Swal.fire({
@@ -446,18 +496,16 @@
                                 Swal.fire({
                                     icon: 'error',
                                     title: 'Gagal Membatalkan',
-                                    text: data.message ||
-                                        'Terjadi kesalahan saat membatalkan pembayaran',
+                                    text: data.message,
                                     confirmButtonColor: '#4f46e5'
                                 });
                             }
                         })
                         .catch(error => {
-                            Swal.close();
                             Swal.fire({
                                 icon: 'error',
-                                title: 'Terjadi Kesalahan',
-                                text: 'Gagal membatalkan pembayaran. Silakan coba lagi.',
+                                title: 'Error',
+                                text: 'Terjadi kesalahan saat membatalkan transaksi',
                                 confirmButtonColor: '#4f46e5'
                             });
                         });
@@ -469,6 +517,13 @@
             if (!document.hidden) {
                 checkPaymentStatus(false);
             }
+        });
+
+        // Check payment status when coming back from payment app
+        window.addEventListener('focus', function() {
+            setTimeout(() => {
+                checkPaymentStatus(false);
+            }, 2000);
         });
     </script>
 @endsection

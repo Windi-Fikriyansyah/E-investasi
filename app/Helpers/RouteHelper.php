@@ -13,9 +13,9 @@ class RouteHelper
 
         $titles = [
             'dashboard' => 'Dashboard',
-            'user.dashboard' => 'Beranda',
+            'user.dashboard' => 'Saya',
             'admin.dashboard' => 'Admin Dashboard',
-            'produk.index' => 'Investasi',
+            'produk.index' => 'Beranda',
             'pesanan' => 'Pesanan',
             'bonus.index' => 'Tim Saya',
             'forum.index' => 'Forum',
