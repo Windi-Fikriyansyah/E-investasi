@@ -98,6 +98,7 @@
                                 <th>Username</th>
                                 <th>Saldo</th>
                                 <th>Status</th>
+                                <th>Keanggotaan</th>
                                 <th>Aksi</th>
                             </tr>
                         </thead>
@@ -120,8 +121,6 @@
                 <div class="modal-body">
                     <div class="row">
                         <div class="col-md-4 text-center">
-                            <img id="detail-user-avatar" src="" alt="User Avatar"
-                                class="img-fluid rounded-circle mb-3" width="150">
                             <h4 id="detail-user-name" class="mb-1"></h4>
                             <span id="detail-user-status" class="badge mb-2"></span>
                             <p id="detail-user-email" class="text-muted"></p>
@@ -157,6 +156,66 @@
             </div>
         </div>
     </div>
+
+
+    <div class="modal fade" id="editPasswordModal" tabindex="-1" aria-labelledby="editPasswordModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editPasswordModalLabel">Edit Password Pengguna</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="editPasswordForm">
+                    <div class="modal-body">
+                        <input type="hidden" id="edit-password-user-id" name="id">
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Password Baru</label>
+                            <input type="password" class="form-control" id="password" name="password" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="password_confirmation" class="form-label">Konfirmasi Password</label>
+                            <input type="password" class="form-control" id="password_confirmation"
+                                name="password_confirmation" required>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                        <button type="submit" class="btn btn-primary">Simpan</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Modal for Add Balance -->
+    <div class="modal fade" id="addBalanceModal" tabindex="-1" aria-labelledby="addBalanceModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addBalanceModalLabel">Tambah Saldo Pengguna</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="addBalanceForm">
+                    <div class="modal-body">
+                        <input type="hidden" id="add-balance-user-id" name="id">
+                        <div class="mb-3">
+                            <label for="amount" class="form-label">Jumlah Saldo</label>
+                            <input type="number" class="form-control" id="amount" name="amount" required
+                                min="1000">
+                            <small class="text-muted">Minimal penambahan saldo: Rp 1.000</small>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                        <button type="submit" class="btn btn-primary">Tambahkan</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 @endsection
 
 @push('js')
@@ -187,6 +246,10 @@
             font-size: 0.75rem;
             margin-right: 0.25rem;
         }
+
+        .swal2-container {
+            z-index: 999999 !important;
+        }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
@@ -197,6 +260,73 @@
                 }
             });
 
+            $(document).on('click', '.add-balance-btn', function(e) {
+                e.preventDefault();
+                var userId = $(this).data('id');
+                var addBalanceUrl = $(this).data('url');
+                $('#add-balance-user-id').val(userId);
+                $('#addBalanceForm').attr('action', addBalanceUrl);
+                $('#addBalanceModal').modal('show');
+            });
+
+            // Add Balance Form Submission
+            $('#addBalanceForm').submit(function(e) {
+                e.preventDefault();
+                var formData = $(this).serialize();
+                var url = $(this).attr('action');
+
+                $.ajax({
+                    url: url,
+                    type: 'POST',
+                    data: formData,
+                    beforeSend: function() {
+                        $('#addBalanceModal').modal('hide');
+                        Swal.fire({
+                            title: 'Memproses',
+                            html: 'Sedang menambahkan saldo...',
+                            allowOutsideClick: false,
+                            didOpen: () => {
+                                Swal.showLoading()
+                            }
+                        });
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            Swal.fire({
+                                title: 'Berhasil!',
+                                text: 'Saldo berhasil ditambahkan',
+                                icon: 'success',
+                                confirmButtonText: 'OK'
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    $('#addBalanceModal').modal('hide');
+                                    $('#addBalanceForm')[0].reset();
+                                    $('#products').DataTable().ajax.reload();
+                                }
+                            });
+                        }
+                    },
+                    error: function(xhr) {
+                        var errors = xhr.responseJSON.errors;
+                        var errorMessage = '';
+
+                        if (errors && errors.amount) {
+                            errorMessage = errors.amount[0];
+                        } else if (xhr.responseJSON && xhr.responseJSON.message) {
+                            errorMessage = xhr.responseJSON.message;
+                        } else {
+                            errorMessage = 'Terjadi kesalahan saat menambahkan saldo.';
+                        }
+
+                        Swal.fire({
+                            title: 'Error!',
+                            text: errorMessage,
+                            icon: 'error',
+                            confirmButtonText: 'OK'
+                        });
+                    }
+                });
+            });
             $('#products').DataTable({
                 processing: true,
                 serverSide: true,
@@ -225,6 +355,10 @@
                         name: 'status'
                     },
                     {
+                        data: 'keanggotaan',
+                        name: 'keanggotaan'
+                    },
+                    {
                         data: 'action',
                         name: 'action',
                         orderable: false,
@@ -237,7 +371,7 @@
                     },
                     {
                         className: "dt-body-center",
-                        targets: [0, 1, 2, 3, 4]
+                        targets: [0, 1, 2, 3, 4, 5]
                     }
                 ]
             });
@@ -349,7 +483,8 @@
                         var user = response.data;
 
                         // Set user data in modal
-                        $('#detail-user-name').text(user.phone);
+                        $('#detail-user-name').text(user.name);
+                        $('#detail-user-email').text(user.email);
                         var saldo = user.saldo ? 'Rp ' + Number(user.saldo).toLocaleString(
                             'id-ID') : 'Rp 0';
                         $('#detail-user-saldo').text(saldo);
@@ -377,6 +512,92 @@
                         'Gagal memuat detail pengguna.',
                         'error'
                     );
+                });
+            });
+
+
+            $(document).on('click', '.edit-password-btn', function(e) {
+                e.preventDefault();
+                var userId = $(this).data('id');
+                $('#edit-password-user-id').val(userId);
+                $('#editPasswordModal').modal('show');
+            });
+
+            // Handle password form submission
+            $('#editPasswordForm').submit(function(e) {
+                e.preventDefault();
+
+                // Ambil nilai password dan konfirmasi password
+                var password = $('#password').val();
+                var password_confirmation = $('#password_confirmation').val();
+
+                // Validasi client-side sebelum kirim ke server
+                if (password !== password_confirmation) {
+                    Swal.fire({
+                        title: 'Error!',
+                        text: 'Password dan konfirmasi password tidak sama!',
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
+                    return false;
+                }
+
+                // Jika validasi client-side berhasil, lanjutkan ke server
+                var userId = $('#edit-password-user-id').val();
+                var formData = $(this).serialize();
+                var url = "{{ route('admin.user.update-password', '') }}/" + userId;
+
+                $.ajax({
+                    url: url,
+                    type: 'POST',
+                    data: formData,
+                    beforeSend: function() {
+                        $('#editPasswordModal').modal('hide');
+                        // Show loading indicator
+                        Swal.fire({
+                            title: 'Memproses',
+                            html: 'Sedang mengubah password...',
+                            allowOutsideClick: false,
+                            didOpen: () => {
+                                Swal.showLoading()
+                            }
+                        });
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            $('#editPasswordModal').modal('hide');
+                            Swal.fire({
+                                title: 'Berhasil!',
+                                text: 'Password berhasil diubah.',
+                                icon: 'success',
+                                confirmButtonText: 'OK'
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    $('#editPasswordModal').modal('hide');
+                                    $('#editPasswordForm')[0].reset();
+                                }
+                            });
+                        }
+                    },
+                    error: function(xhr) {
+                        var errors = xhr.responseJSON.errors;
+                        var errorMessage = '';
+
+                        if (errors && errors.password) {
+                            errorMessage = errors.password[0];
+                        } else if (xhr.responseJSON && xhr.responseJSON.message) {
+                            errorMessage = xhr.responseJSON.message;
+                        } else {
+                            errorMessage = 'Terjadi kesalahan saat mengubah password.';
+                        }
+
+                        Swal.fire({
+                            title: 'Error!',
+                            text: errorMessage,
+                            icon: 'error',
+                            confirmButtonText: 'OK'
+                        });
+                    }
                 });
             });
         });

@@ -66,6 +66,9 @@ Route::middleware(['auth', 'verified', 'role:admin'])->prefix('admin')->group(fu
         Route::post('/load', [UserController::class, 'load'])->name('load');
         Route::post('/{user}/toggle-status', [UserController::class, 'toggleStatus'])->name('toggle-status');
         Route::get('/{user}', [UserController::class, 'show'])->name('show');
+        Route::post('/update-password/{id}', [UserController::class, 'updatePassword'])
+            ->name('update-password');
+        Route::post('/users/{id}/update-balance', [UserController::class, 'updateBalance'])->name('update-balance');
     });
 
     Route::prefix('admin')->as('admin.admin.')->group(function () {

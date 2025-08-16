@@ -12,10 +12,10 @@ class UserController extends Controller
 {
     public function index()
     {
-        $totalUsers = User::where('role', 'user')->count();
-        $activeUsers = User::where('role', 'user')->where('status', 'active')->count();
-        $inactiveUsers = User::where('role', 'user')->where('status', 'inactive')->count();
-        $totalBalance = User::where('role', 'user')->sum('balance');
+        $totalUsers = User::count();
+        $activeUsers = User::where('status', 'active')->count();
+        $inactiveUsers = User::where('status', 'inactive')->count();
+        $totalBalance = User::sum('balance');
 
         return view('admin.users.index', compact(
             'totalUsers',
@@ -34,7 +34,8 @@ class UserController extends Controller
             return response()->json([
                 'success' => true,
                 'data' => [
-                    'phone' => $user->phone,
+                    'name' => $user->name,
+                    'email' => $user->email,
                     'saldo' => $user->balance ?? 0,
                     'status' => $user->status == 'active' ? 'Aktif' : 'Nonaktif',
                     'created_at' => $user->created_at,
@@ -74,7 +75,7 @@ class UserController extends Controller
     {
         $users = User::query()
             ->where('role', 'user')
-            ->select(['id', 'phone', 'email', 'balance', 'status', 'keanggotaan'])
+            ->select(['id', 'name', 'email', 'phone', 'balance', 'status', 'keanggotaan'])
             ->latest();
 
         return DataTables::of($users)
@@ -82,10 +83,12 @@ class UserController extends Controller
             ->addColumn('action', function ($user) {
                 $toggleUrl = route('admin.user.toggle-status', $user->id);
                 $detailUrl = route('admin.user.show', Crypt::encrypt($user->id));
+                $addBalanceUrl = route('admin.user.update-balance', $user->id);
 
                 $buttons = '<div class="action-buttons">';
                 $buttons .= '<a href="' . $detailUrl . '" class="btn btn-sm btn-info detail-btn"><i class="bi bi-eye-fill"></i></a>';
-
+                $buttons .= '<button class="btn btn-sm btn-primary add-balance-btn" data-url="' . $addBalanceUrl . '" data-id="' . $user->id . '" title="Tambah Saldo"><i class="bi bi-wallet2"></i></button>';
+                $buttons .= '<button class="btn btn-sm btn-warning edit-password-btn" data-id="' . $user->id . '" title="Edit Password"><i class="bi bi-key-fill"></i></button>';
                 if ($user->status == 'active') {
                     $buttons .= '<button class="btn btn-sm btn-danger toggle-status-btn" data-url="' . $toggleUrl . '" data-id="' . $user->id . '" data-status="Aktif" title="Nonaktifkan"><i class="bi bi-power"></i></button>';
                 } else {
@@ -110,5 +113,63 @@ class UserController extends Controller
             })
             ->rawColumns(['status', 'action'])
             ->make(true);
+    }
+
+    public function updatePassword(Request $request, $id)
+    {
+        try {
+            $request->validate([
+                'password' => 'required|string|min:8|confirmed',
+            ], [
+                'password.required' => 'Password wajib diisi',
+                'password.min' => 'Password minimal 8 karakter',
+                'password.confirmed' => 'Konfirmasi password tidak sama',
+            ]);
+
+            $user = User::findOrFail($id);
+            $user->update([
+                'password' => bcrypt($request->password)
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Password updated successfully'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+                'errors' => $e->validator ? $e->validator->errors() : []
+            ], 500);
+        }
+    }
+
+    // Add this method to your UserController
+    public function updateBalance(Request $request, $id)
+    {
+        try {
+            $request->validate([
+                'amount' => 'required|numeric|min:1000',
+            ], [
+                'amount.required' => 'Jumlah saldo wajib diisi',
+                'amount.numeric' => 'Jumlah harus berupa angka',
+                'amount.min' => 'Minimal penambahan saldo adalah 1000',
+            ]);
+
+            $user = User::findOrFail($id);
+            $user->increment('balance', $request->amount);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Saldo berhasil ditambahkan',
+                'new_balance' => $user->balance
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+                'errors' => $e->validator ? $e->validator->errors() : []
+            ], 500);
+        }
     }
 }

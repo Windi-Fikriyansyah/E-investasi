@@ -56,12 +56,6 @@
         </a>
     </li>
 
-    <li class="menu-item">
-        <a href="{{ route('admin.midtrans_settings.index') }}" class="menu-link">
-            <i class="menu-icon tf-icons bx bx-cog"></i>
-            <div data-i18n="Tables">Setting Api Midtrans</div>
-        </a>
-    </li>
 
     <li class="menu-item">
         <a href="{{ route('admin.user.index') }}" class="menu-link">
