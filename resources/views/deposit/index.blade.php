@@ -18,7 +18,7 @@
                             placeholder="Masukkan jumlah" required>
                         <input type="hidden" id="amount_raw" name="amount_raw">
                     </div>
-                    <small class="text-muted">Minimal Deposit Rp 10.000</small>
+                    <small class="text-muted">Minimal Deposit Rp 100.000</small>
                 </div>
 
                 <div class="form-group">
@@ -529,11 +529,11 @@
 
                 // Validasi manual sebelum submit
                 let rawValue = $('#amount_raw').val();
-                if (!rawValue || parseInt(rawValue) < 100) {
+                if (!rawValue || parseInt(rawValue) < 100000) {
                     Swal.fire({
                         icon: 'error',
                         title: 'Oops...',
-                        text: 'Minimum deposit adalah Rp 10.000',
+                        text: 'Minimum deposit adalah Rp 100.000',
                         confirmButtonColor: '#696cff'
                     });
                     return false;
