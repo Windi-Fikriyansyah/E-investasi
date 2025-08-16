@@ -529,7 +529,7 @@
 
                 // Validasi manual sebelum submit
                 let rawValue = $('#amount_raw').val();
-                if (!rawValue || parseInt(rawValue) < 10000) {
+                if (!rawValue || parseInt(rawValue) < 100) {
                     Swal.fire({
                         icon: 'error',
                         title: 'Oops...',
