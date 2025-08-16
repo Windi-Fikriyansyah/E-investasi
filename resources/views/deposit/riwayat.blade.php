@@ -21,7 +21,7 @@
                             <div class="deposit-icon">
                                 @if ($deposit->status == 'completed')
                                     <i class="fas fa-check-circle"></i>
-                                @elseif($deposit->status == 'pending' || $deposit->status == 'processing')
+                                @elseif (in_array($deposit->status, ['pending', 'processing']))
                                     <i class="fas fa-clock text-warning"></i>
                                 @else
                                     <i class="fas fa-times-circle"></i>
@@ -42,7 +42,7 @@
                         <div class="deposit-status">
                             @if ($deposit->status == 'completed')
                                 <span class="status-badge completed">Berhasil</span>
-                            @elseif($deposit->status == 'pending')
+                            @elseif(in_array($deposit->status, ['pending', 'processing']))
                                 <span class="status-badge pending">Menunggu</span>
                                 <a href="{{ route('deposit.continue', ['order_id' => $deposit->order_id]) }}"
                                     class="complete-payment-btn">
