@@ -21,8 +21,8 @@
                             <div class="deposit-icon">
                                 @if ($deposit->status == 'completed')
                                     <i class="fas fa-check-circle"></i>
-                                @elseif($deposit->status == 'pending')
-                                    <i class="fas fa-clock"></i>
+                                @elseif($deposit->status == 'pending' || $deposit->status == 'processing')
+                                    <i class="fas fa-clock text-warning"></i>
                                 @else
                                     <i class="fas fa-times-circle"></i>
                                 @endif
