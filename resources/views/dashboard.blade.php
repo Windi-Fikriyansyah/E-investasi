@@ -128,7 +128,7 @@
                     </div>
                 </a>
 
-                <a href="https://t.me/JOLT_GIZMO_CELERITY" target="_blank" class="menu-item">
+                <a href="https://t.me/+4hDdNT3klRwzYzI1" target="_blank" class="menu-item">
                     <div class="menu-icon bg-blue">
                         <i class="fab fa-telegram"></i>
                     </div>

@@ -101,7 +101,7 @@
                 <i class="fas fa-chevron-right"></i>
             </a>
 
-            <a href="https://t.me/JOLT_GIZMO_CELERITY" target="_blank" class="menu-item">
+            <a href="https://t.me/+4hDdNT3klRwzYzI1" target="_blank" class="menu-item">
                 <div class="menu-icon">
                     <i class="fas fa-paper-plane"></i>
                 </div>
