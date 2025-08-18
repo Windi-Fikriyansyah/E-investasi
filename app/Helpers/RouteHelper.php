@@ -14,6 +14,7 @@ class RouteHelper
         $titles = [
             'dashboard' => 'Dashboard',
             'user.dashboard' => 'Saya',
+            'beranda.dashboard' => 'Beranda',
             'admin.dashboard' => 'Admin Dashboard',
             'produk.index' => 'Beranda',
             'pesanan' => 'Pesanan',
@@ -33,6 +34,6 @@ class RouteHelper
             // Tambahkan route dan judul lainnya sesuai kebutuhan
         ];
 
-        return $titles[$routeName] ?? 'WealthGrowth';
+        return $titles[$routeName] ?? 'SmartNiuVolt';
     }
 }

@@ -121,11 +121,11 @@
         function shareReferralLink() {
             const referralLink = "{{ url('/register?ref=' . Auth::user()->referral_code) }}";
             const shareText =
-                "Bergabunglah dengan WealthGrowth menggunakan kode referral saya dan dapatkan bonus mulai dari 10%! Kode: {{ Auth::user()->referral_code }}";
+                "Bergabunglah dengan SmartNiuVolt menggunakan kode referral saya dan dapatkan bonus mulai dari 10%! Kode: {{ Auth::user()->referral_code }}";
 
             if (navigator.share) {
                 navigator.share({
-                    title: 'WealthGrowth Referral',
+                    title: 'SmartNiuVolt Referral',
                     text: shareText,
                     url: referralLink
                 }).catch(err => {

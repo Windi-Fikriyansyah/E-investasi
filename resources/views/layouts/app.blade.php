@@ -7,7 +7,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="theme-color" content="#2563eb">
     <meta name="description" content="Platform Investasi Modern - Bangun Masa Depan Finansial Anda">
-    <title>WealthGrowth | Platform Investasi Modern</title>
+    <title>SmartNiuVolt | Platform Investasi Modern</title>
     <link rel="manifest" href="manifest.json">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.css" />
