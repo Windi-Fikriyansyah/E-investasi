@@ -55,7 +55,7 @@ class RegisteredUserController extends Controller
             'password' => Hash::make($request->password),
             'referral_code' => Str::random(8),
             'role' => 'user', // default role
-            'balance' => 0, // default balance
+            'balance' => 5000, // default balance
             'status' => 'active',
         ];
 

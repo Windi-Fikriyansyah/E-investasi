@@ -85,6 +85,13 @@
                             </div>
                         </div>
                     </div>
+
+                    <div class="about-images">
+                        <div class="image-wrapper">
+                            <img src="{{ asset('images/tabel.jpg') }}" alt="Pendapatan SMARTNIUVOLT" class="about-image">
+                        </div>
+
+                    </div>
                 </div>
             </section>
         </div>
