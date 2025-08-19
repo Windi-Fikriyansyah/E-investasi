@@ -32,7 +32,7 @@ class WithdrawController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'amount_raw' => 'required|numeric|min:50000',
+            'amount_raw' => 'required|numeric|min:35000',
             'bank' => 'required|exists:bank,id',
         ]);
 

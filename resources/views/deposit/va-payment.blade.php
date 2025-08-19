@@ -74,6 +74,10 @@
                     </div>
                 </div>
 
+                <button type="button" class="btn btn-outline-danger" onclick="cancelPayment()">
+                    <i class="fas fa-times"></i> Batalkan Pembayaran
+                </button>
+
 
             </div>
         </div>
@@ -521,5 +525,62 @@
             // Initial check after 10 seconds
             setTimeout(() => checkPaymentStatus(false), 10000);
         });
+
+        function cancelPayment() {
+            Swal.fire({
+                title: 'Batalkan Pembayaran?',
+                text: 'Apakah Anda yakin ingin membatalkan transaksi ini?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#ef4444',
+                cancelButtonColor: '#6b7280',
+                confirmButtonText: 'Ya, Batalkan',
+                cancelButtonText: 'Tidak'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Panggil API untuk membatalkan transaksi
+                    fetch('{{ route('deposit.cancel-va') }}', {
+                            method: 'POST',
+                            headers: {
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                'Content-Type': 'application/json',
+                                'Accept': 'application/json',
+                            },
+                            body: JSON.stringify({
+                                order_id: '{{ $deposit->order_id }}'
+                            })
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                clearInterval(checkInterval);
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Pembayaran Dibatalkan',
+                                    text: data.message,
+                                    confirmButtonColor: '#4f46e5'
+                                }).then(() => {
+                                    window.location.href = '{{ route('deposit.index') }}';
+                                });
+                            } else {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Gagal Membatalkan',
+                                    text: data.message,
+                                    confirmButtonColor: '#4f46e5'
+                                });
+                            }
+                        })
+                        .catch(error => {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: 'Terjadi kesalahan saat membatalkan transaksi',
+                                confirmButtonColor: '#4f46e5'
+                            });
+                        });
+                }
+            });
+        }
     </script>
 @endsection

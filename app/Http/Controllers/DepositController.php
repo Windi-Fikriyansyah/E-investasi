@@ -867,6 +867,59 @@ class DepositController extends Controller
         }
     }
 
+    public function cancelVA(Request $request)
+    {
+        $request->validate([
+            'order_id' => 'required|string'
+        ]);
+
+        $deposit = DB::table('deposits')
+            ->where('order_id', $request->order_id)
+            ->where('user_id', auth()->id())
+            ->first();
+
+        if (!$deposit) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Transaksi tidak ditemukan'
+            ], 404);
+        }
+
+        // Hanya bisa membatalkan transaksi yang masih pending/processing
+        if (!in_array($deposit->status, ['pending', 'processing'])) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Transaksi tidak dapat dibatalkan karena status sudah ' . $deposit->status
+            ], 400);
+        }
+
+        try {
+            // Untuk e-wallet, kita tidak bisa membatalkan di sisi Paylabs, jadi cukup update status
+            DB::table('deposits')
+                ->where('id', $deposit->id)
+                ->update([
+                    'status' => 'failed',
+                    'updated_at' => now(),
+                    'cancel_reason' => 'Dibatalkan oleh pengguna'
+                ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Transaksi berhasil dibatalkan'
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error cancelling e-wallet transaction', [
+                'order_id' => $request->order_id,
+                'error' => $e->getMessage()
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan sistem: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
     public function createVA(Request $request)
     {
 

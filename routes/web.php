@@ -187,6 +187,8 @@ Route::middleware('auth')->group(function () {
         Route::get('/deposit/ewallet/callback/{order_id}', [DepositController::class, 'ewalletCallback'])->name('ewallet.callback');
         Route::post('/deposit/cancel-ewallet', [DepositController::class, 'cancelEWallet'])
             ->name('cancel-ewallet');
+        Route::post('/deposit/cancel-va', [DepositController::class, 'cancelVA'])
+            ->name('cancel-va');
         Route::post('/deposit/check-status', [DepositController::class, 'checkVAStatus'])->name('check-status');
     });
 
