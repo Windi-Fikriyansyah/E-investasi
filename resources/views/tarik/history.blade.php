@@ -83,28 +83,7 @@
                                         </div>
                                     </div>
 
-                                    <div class="detail-row">
-                                        <div class="details-items">
-                                            <div class="detail-icon">
-                                                <i class="fas fa-university"></i>
-                                            </div>
-                                            <div class="detail-content">
-                                                <span class="detail-label">Bank Tujuan</span>
-                                                <span class="detail-value">{{ $withdrawal->bank_name }} -
-                                                    {{ $withdrawal->bank_account }}</span>
-                                            </div>
-                                        </div>
 
-                                        <div class="details-items">
-                                            <div class="detail-icon">
-                                                <i class="fas fa-credit-card"></i>
-                                            </div>
-                                            <div class="detail-content">
-                                                <span class="detail-label">Nomor Rekening</span>
-                                                <span class="detail-value">{{ $withdrawal->bank_number }}</span>
-                                            </div>
-                                        </div>
-                                    </div>
 
                                     @if ($withdrawal->notes)
                                         <div class="detail-row">
